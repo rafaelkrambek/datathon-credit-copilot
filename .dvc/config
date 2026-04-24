@@ -1,4 +1,4 @@
 [core]
     remote = local
 ['remote "local"']
-    url = /home/vscode/dvc-store
+    url = ~/dvc-store
