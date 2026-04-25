@@ -196,8 +196,8 @@ mlflow ui --workers 1 --host 127.0.0.1 --port 5000
 | Modelo | Features | valid_roc_auc | valid_gini | valid_ks | valid_pr_auc |
 |---|---|---|---|---|---|
 | LogReg + WoE | application_train (82 cols) | 0.7495 | 0.4990 | 0.3655 | 0.2318 |
-| LightGBM v1 | application_train (82 cols) | *pendente* | *pendente* | *pendente* | *pendente* |
-| LightGBM v2 | +bureau, prev_app, installments, pos, cc (~150 cols) | *pendente* | *pendente* | *pendente* | *pendente* |
+| LightGBM v1 | application_train (82 cols) | 0.7619 | 0.5238 | 0.3927 | 0.2495 |
+| LightGBM v2 | +bureau, prev_app, installments, pos, cc (~150 cols) | 0.7825 | 0.5650 | 0.4271 | 0.2796 |
 
 **Interpretação**: baseline LogReg já entrega KS ~0.37 (regulador brasileiro considera ≥0.30 como aceitável para crédito de consumo). O Gini de 0.50 é competitivo para um modelo lean sem as agregações das outras tabelas.
 

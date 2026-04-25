@@ -135,3 +135,15 @@ markers = [
 [tool.coverage.run]
 source = ["src"]
 omit = ["tests/*", "notebooks/*"]
+
+
+ml = [
+    "torch>=2.4,<2.5",
+    "mlflow>=2.16",
+    "dvc[s3]>=3.55",
+    "evidently>=0.4.33",
+    "fairlearn>=0.11",
+    "shap>=0.46",
+    "optuna>=4.0",
+    "category-encoders>=2.6",   # <--
+]
