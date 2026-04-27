@@ -1,0 +1,82 @@
+[
+  {
+    "id": "G01",
+    "category": "default_alto",
+    "question": "Avalie o cliente SK_ID_CURR 100002. Pode aprovar?",
+    "expected_recommendation": ["NEGAR", "REVISAO_MANUAL"],
+    "expected_keywords": ["83", "MUITO_ALTO", "EXT_SOURCE"],
+    "expected_tools": ["get_applicant_profile", "get_bureau_history", "score_and_explain"]
+  },
+  {
+    "id": "G02",
+    "category": "default_baixo",
+    "question": "O cliente SK_ID_CURR 100003 esta apto para credito?",
+    "expected_recommendation": ["APROVAR"],
+    "expected_keywords": ["BAIXO", "8.85", "Higher education"],
+    "expected_tools": ["get_applicant_profile", "score_and_explain"]
+  },
+  {
+    "id": "G03",
+    "category": "regulacao_lgpd",
+    "question": "Avalie o cliente 100002. Como devo proceder se a recomendacao for negar conforme a LGPD?",
+    "expected_recommendation": ["NEGAR", "REVISAO_MANUAL"],
+    "expected_keywords": ["LGPD", "Art. 20", "ANALISE HUMANA", "revisao"],
+    "expected_tools": ["search_credit_policy"]
+  },
+  {
+    "id": "G04",
+    "category": "superendividamento",
+    "question": "O cliente 100002 esta em risco de superendividamento? Cite a legislacao.",
+    "expected_recommendation": ["NEGAR", "REVISAO_MANUAL"],
+    "expected_keywords": ["14.181", "30%", "parcela", "renda"],
+    "expected_tools": ["search_credit_policy", "get_applicant_profile"]
+  },
+  {
+    "id": "G05",
+    "category": "comparacao",
+    "question": "Compare os clientes 100002 e 100003. Qual tem menor risco?",
+    "expected_recommendation": ["APROVAR"],
+    "expected_keywords": ["100003", "BAIXO", "100002", "MUITO_ALTO"],
+    "expected_tools": ["get_applicant_profile", "score_and_explain"]
+  },
+  {
+    "id": "G06",
+    "category": "perfil_demografico",
+    "question": "Qual o perfil socio-demografico do cliente 100004?",
+    "expected_recommendation": [],
+    "expected_keywords": ["idade", "renda", "education"],
+    "expected_tools": ["get_applicant_profile"]
+  },
+  {
+    "id": "G07",
+    "category": "explicabilidade",
+    "question": "Quais sao os principais fatores que influenciam o risco do cliente 100002?",
+    "expected_recommendation": [],
+    "expected_keywords": ["EXT_SOURCE", "SHAP", "fator"],
+    "expected_tools": ["score_and_explain"]
+  },
+  {
+    "id": "G08",
+    "category": "historico_externo",
+    "question": "O cliente 100002 tem historico de credito externo?",
+    "expected_recommendation": [],
+    "expected_keywords": ["bureau", "credito", "8"],
+    "expected_tools": ["get_bureau_history"]
+  },
+  {
+    "id": "G09",
+    "category": "metodologia_provisao",
+    "question": "Avalie o cliente 100002 e cite a metodologia regulatoria de provisao para perdas.",
+    "expected_recommendation": ["NEGAR", "REVISAO_MANUAL"],
+    "expected_keywords": ["4.966", "PD", "LGD"],
+    "expected_tools": ["search_credit_policy", "score_and_explain"]
+  },
+  {
+    "id": "G10",
+    "category": "cliente_inexistente",
+    "question": "Avalie o cliente SK_ID_CURR 99999999.",
+    "expected_recommendation": [],
+    "expected_keywords": ["nao encontrado", "nao existe", "indisponivel"],
+    "expected_tools": ["get_applicant_profile"]
+  }
+]

@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from langchain.agents import AgentExecutor, create_tool_calling_agent
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_groq import ChatGroq
+from langfuse.callback import CallbackHandler as LangfuseHandler
 
 from src.agent.tools import ALL_TOOLS
 
@@ -69,6 +70,14 @@ def build_agent(model: str | None = None, verbose: bool = True) -> AgentExecutor
     ])
 
     agent = create_tool_calling_agent(llm, ALL_TOOLS, prompt)
+    callbacks = []
+    if os.getenv("LANGFUSE_SECRET_KEY"):
+        callbacks.append(LangfuseHandler(
+            public_key=os.getenv("LANGFUSE_PUBLIC_KEY"),
+            secret_key=os.getenv("LANGFUSE_SECRET_KEY"),
+            host=os.getenv("LANGFUSE_HOST", "https://us.cloud.langfuse.com"),
+        ))
+
     return AgentExecutor(
         agent=agent,
         tools=ALL_TOOLS,
@@ -76,6 +85,7 @@ def build_agent(model: str | None = None, verbose: bool = True) -> AgentExecutor
         handle_parsing_errors=True,
         max_iterations=10,
         return_intermediate_steps=True,
+        callbacks=callbacks,
     )
 
 

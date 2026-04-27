@@ -1,0 +1,53 @@
+{
+  "model_run_id": "92915cfa000f416a8ba6d49cd4993bc1",
+  "sensitive_attribute": "CODE_GENDER",
+  "n_valid": 61502,
+  "baseline": {
+    "attribute": "CODE_GENDER_BASELINE",
+    "by_group": {
+      "selection_rate": {
+        "F": 0.6308455011838989,
+        "M": 0.7713522282660559
+      },
+      "tpr_recall": {
+        "F": 0.907968970380818,
+        "M": 0.9675904180366369
+      }
+    },
+    "auc_by_group": {
+      "M": 0.7837,
+      "F": 0.7828
+    },
+    "demographic_parity_difference": 0.1405,
+    "disparate_impact_ratio": 0.8178,
+    "equalized_odds_difference": 0.1392,
+    "rule_4_5_passes": "True",
+    "interpretation": "Regra 4/5 OK (DIR=0.818). | EOD alto (+0.139) - desigualdade de recall entre grupos."
+  },
+  "mitigated": {
+    "attribute": "CODE_GENDER_MITIGATED",
+    "by_group": {
+      "selection_rate": {
+        "F": 0.26467541436464087,
+        "M": 0.30613608168718387
+      },
+      "tpr_recall": {
+        "F": 0.6583215796897038,
+        "M": 0.6801315171441992
+      }
+    },
+    "auc_by_group": {
+      "M": 0.7837,
+      "F": 0.7828
+    },
+    "demographic_parity_difference": 0.0415,
+    "disparate_impact_ratio": 0.8646,
+    "equalized_odds_difference": 0.0288,
+    "rule_4_5_passes": "True",
+    "interpretation": "Regra 4/5 OK (DIR=0.865). | EOD aceitavel (+0.029)."
+  },
+  "deltas": {
+    "DIR_delta": 0.0468,
+    "EOD_delta": -0.1104
+  }
+}
