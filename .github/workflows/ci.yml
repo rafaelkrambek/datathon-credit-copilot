@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+      - name: Install dependencies (dev only — sem ML/LLM pesados)
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          uv pip install --system -e ".[dev]"
+
+      - name: Lint with ruff
+        run: ruff check src/ scripts/
+
+      - name: Format check
+        run: ruff format --check src/ scripts/
+
+      - name: Smoke imports (sem LLM/data)
+        run: |
+          python -c "from src.security.guardrails import check_input, check_output; print('guardrails OK')"
+          python -c "from src.security.pii import mask_pii; print('pii module OK')"
+          python -c "from src.features.preprocess import load_enriched; print('preprocess OK')"
+
+  docker-build:
+    runs-on: ubuntu-latest
+    needs: lint-and-test
+    if: github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t credit-copilot:ci-${{ github.sha }} .
+
+      - name: Image size
+        run: docker images credit-copilot:ci-${{ github.sha }}

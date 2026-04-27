@@ -1,0 +1,95 @@
+{
+  "summary": {
+    "tecnico": {
+      "mean": 5.0,
+      "n": 3,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 3
+      }
+    },
+    "regulatorio": {
+      "mean": 5.0,
+      "n": 3,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 3
+      }
+    },
+    "negocio": {
+      "mean": 4.33,
+      "n": 3,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 2,
+        "5": 1
+      }
+    },
+    "overall_mean": 4.78
+  },
+  "judged": [
+    {
+      "id": "G01",
+      "question": "Avalie o cliente SK_ID_CURR 100002. Pode aprovar?",
+      "verdict": {
+        "tecnico": {
+          "score": 5,
+          "justificativa": "A resposta utiliza dados precisos e consistentes com as ferramentas utilizadas."
+        },
+        "regulatorio": {
+          "score": 5,
+          "justificativa": "A resposta cita a Lei 14.181/2021 e o Art. 54-A de forma correta e pertinente."
+        },
+        "negocio": {
+          "score": 4,
+          "justificativa": "A recomendação de negar o crédito é coerente com o risco, mas a justificativa poderia ser mais clara sobre a aplicação da LGPD."
+        }
+      }
+    },
+    {
+      "id": "G02",
+      "question": "O cliente SK_ID_CURR 100003 esta apto para credito?",
+      "verdict": {
+        "tecnico": {
+          "score": 5,
+          "justificativa": "A resposta apresenta dados precisos e consistentes com as ferramentas utilizadas."
+        },
+        "regulatorio": {
+          "score": 5,
+          "justificativa": "A resposta cita a Lei 14.181/21 e a regra geral de anuidade/renda <= 30% de forma correta e pertinente."
+        },
+        "negocio": {
+          "score": 4,
+          "justificativa": "A recomendação de aprovar o crédito é coerente com o risco baixo, mas a falta de análise humana pode ser questionável."
+        }
+      }
+    },
+    {
+      "id": "G03",
+      "question": "Avalie o cliente 100002. Como devo proceder se a recomendacao for negar conforme a LGPD?",
+      "verdict": {
+        "tecnico": {
+          "score": 5,
+          "justificativa": "A resposta utiliza dados precisos e consistentes com as ferramentas utilizadas."
+        },
+        "regulatorio": {
+          "score": 5,
+          "justificativa": "A resposta cita a LGPD Art. 20 de forma pertinente e correta."
+        },
+        "negocio": {
+          "score": 5,
+          "justificativa": "A recomendação de negar o crédito é coerente com o risco de default muito alto do cliente."
+        }
+      }
+    }
+  ],
+  "judge_model": "llama-3.1-8b-instant"
+}

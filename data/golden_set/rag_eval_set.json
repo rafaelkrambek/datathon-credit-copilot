@@ -1,0 +1,22 @@
+[
+  {
+    "question": "Posso negar credito apenas com base em modelo automatizado?",
+    "ground_truth": "Nao. A LGPD Art. 20 garante ao titular o direito a revisao por pessoa natural de decisoes tomadas unicamente com base em tratamento automatizado, incluindo decisoes de credito. O controlador deve fornecer informacoes claras sobre os criterios da decisao.",
+    "expected_source": "lgpd_art20.md"
+  },
+  {
+    "question": "Qual o limite de razao parcela/renda na concessao de credito?",
+    "ground_truth": "A Lei 14.181/2021 prevê o cuidado contra superendividamento. A regra geral pratica e que a razao parcela/renda nao ultrapasse 30%, garantindo a reserva do minimo existencial.",
+    "expected_source": "lei_14181_superendividamento.md"
+  },
+  {
+    "question": "Que metricas o regulador exige para validar modelos internos de credito?",
+    "ground_truth": "A Resolucao CMN 4.557 exige documentacao de premissas, validacao periodica e backtesting. Metricas tipicas: Gini, KS e PSI. A CMN 4.966 exige validacao anual por unidade independente.",
+    "expected_source": "cmn_4557.md"
+  },
+  {
+    "question": "O consumidor tem direito de acessar seus dados em bancos de credito?",
+    "ground_truth": "Sim, conforme o CDC Art. 43, o consumidor tem direito de acesso as informacoes em cadastros, fichas, registros e dados pessoais sobre ele, em linguagem clara e objetiva, com correcao no prazo de 5 dias uteis caso encontre inexatidao.",
+    "expected_source": "cdc_art43.md"
+  }
+]

@@ -1,0 +1,10 @@
+{
+  "n_samples": 4,
+  "eval_model": "llama-3.1-8b-instant",
+  "metrics_mean": {
+    "faithfulness": 0.75,
+    "answer_relevancy": 0.2582,
+    "context_precision": 0.75,
+    "context_recall": 0.6875
+  }
+}

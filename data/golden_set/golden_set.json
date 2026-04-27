@@ -78,5 +78,85 @@
     "expected_recommendation": [],
     "expected_keywords": ["nao encontrado", "nao existe", "indisponivel"],
     "expected_tools": ["get_applicant_profile"]
+  },
+  {
+    "id": "G11",
+    "category": "fairness",
+    "question": "Avalie o cliente 100007. O modelo poderia estar discriminando por genero?",
+    "expected_recommendation": [],
+    "expected_keywords": ["fairness", "genero", "vies", "auditar"],
+    "expected_tools": ["get_applicant_profile", "score_and_explain"]
+  },
+  {
+    "id": "G12",
+    "category": "default_borderline",
+    "question": "Avalie o cliente 100008. Esta na fronteira de aprovacao?",
+    "expected_recommendation": ["APROVAR", "REVISAO_MANUAL"],
+    "expected_keywords": ["EXT_SOURCE", "tier"],
+    "expected_tools": ["get_applicant_profile", "score_and_explain"]
+  },
+  {
+    "id": "G13",
+    "category": "afford_calc",
+    "question": "Para o cliente 100003, qual a razao parcela/renda? Esta dentro do limite regulatorio?",
+    "expected_recommendation": [],
+    "expected_keywords": ["parcela", "renda", "30%", "14.181"],
+    "expected_tools": ["get_applicant_profile", "search_credit_policy"]
+  },
+  {
+    "id": "G14",
+    "category": "historico_interno",
+    "question": "O cliente 100004 ja tomou credito conosco antes? Qual o desempenho?",
+    "expected_recommendation": [],
+    "expected_keywords": ["historico", "interno", "anteriores"],
+    "expected_tools": ["get_internal_history"]
+  },
+  {
+    "id": "G15",
+    "category": "scr_acesso",
+    "question": "Que regulamentacao garante ao cliente 100002 o acesso aos dados do SCR?",
+    "expected_recommendation": [],
+    "expected_keywords": ["CDC", "Art. 43", "SCR", "consumidor"],
+    "expected_tools": ["search_credit_policy"]
+  },
+  {
+    "id": "G16",
+    "category": "credito_alto_renda",
+    "question": "O cliente 100002 esta solicitando credito compativel com sua renda? Avalie.",
+    "expected_recommendation": ["NEGAR", "REVISAO_MANUAL"],
+    "expected_keywords": ["renda", "credito", "razao"],
+    "expected_tools": ["get_applicant_profile", "score_and_explain"]
+  },
+  {
+    "id": "G17",
+    "category": "decisao_negocio",
+    "question": "Tenho orcamento limitado para conceder credito hoje. Entre os clientes 100003 e 100002, qual devo priorizar?",
+    "expected_recommendation": ["APROVAR"],
+    "expected_keywords": ["100003", "BAIXO", "100002", "ALTO"],
+    "expected_tools": ["get_applicant_profile", "score_and_explain"]
+  },
+  {
+    "id": "G18",
+    "category": "modelo_validacao",
+    "question": "Que metricas o regulador exige para validar modelos internos de risco de credito?",
+    "expected_recommendation": [],
+    "expected_keywords": ["KS", "Gini", "PSI", "backtesting", "4.557"],
+    "expected_tools": ["search_credit_policy"]
+  },
+  {
+    "id": "G19",
+    "category": "bureau_atraso",
+    "question": "O cliente 100002 tem creditos em atraso no bureau? Como isso afeta a decisao?",
+    "expected_recommendation": ["NEGAR", "REVISAO_MANUAL"],
+    "expected_keywords": ["bureau", "atraso", "overdue"],
+    "expected_tools": ["get_bureau_history", "score_and_explain"]
+  },
+  {
+    "id": "G20",
+    "category": "estagio_credito",
+    "question": "Avalie o cliente 100002. Se aprovado, em qual estagio de credito (CMN 4.966) ele se enquadraria?",
+    "expected_recommendation": ["NEGAR", "REVISAO_MANUAL"],
+    "expected_keywords": ["estagio", "4.966", "PD"],
+    "expected_tools": ["score_and_explain", "search_credit_policy"]
   }
 ]

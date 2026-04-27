@@ -1,0 +1,50 @@
+{
+  "n_features": 8,
+  "n_drifted": 2,
+  "drifted_features": [
+    "EXT_SOURCE_2",
+    "AMT_INCOME_TOTAL"
+  ],
+  "results": {
+    "EXT_SOURCE_1": {
+      "ks_stat": 0.0094,
+      "p_value": 0.612267,
+      "drift_detected": false
+    },
+    "EXT_SOURCE_2": {
+      "ks_stat": 0.1534,
+      "p_value": 0.0,
+      "drift_detected": true
+    },
+    "EXT_SOURCE_3": {
+      "ks_stat": 0.0123,
+      "p_value": 0.053718,
+      "drift_detected": false
+    },
+    "AMT_INCOME_TOTAL": {
+      "ks_stat": 0.1939,
+      "p_value": 0.0,
+      "drift_detected": true
+    },
+    "AMT_CREDIT": {
+      "ks_stat": 0.0053,
+      "p_value": 0.791286,
+      "drift_detected": false
+    },
+    "AMT_ANNUITY": {
+      "ks_stat": 0.0041,
+      "p_value": 0.963009,
+      "drift_detected": false
+    },
+    "DAYS_BIRTH": {
+      "ks_stat": 0.005,
+      "p_value": 0.845602,
+      "drift_detected": false
+    },
+    "DAYS_EMPLOYED": {
+      "ks_stat": 0.008,
+      "p_value": 0.408112,
+      "drift_detected": false
+    }
+  }
+}
