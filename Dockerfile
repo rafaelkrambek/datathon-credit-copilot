@@ -22,8 +22,8 @@ ENV PATH="/root/.local/bin:${PATH}"
 
 WORKDIR /app
 
-# Copia apenas pyproject pra cache de deps
-COPY pyproject.toml ./
+# Copia pyproject + README (necessario pro hatchling) + src
+COPY pyproject.toml README.md ./
 COPY src/ ./src/
 
 # Cria venv e instala todas as deps em modo editavel
