@@ -1,0 +1,46 @@
+# Git e dev
+.git
+.gitignore
+.github
+.vscode
+.idea
+.devcontainer
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+.venv
+venv
+env
+
+# Dados grandes (montar via volume em runtime)
+data/raw/
+data/processed/
+data/golden_set/
+
+# Notebooks e outputs
+notebooks/
+*.ipynb
+.ipynb_checkpoints
+
+# Documentacao
+docs/
+*.md
+!README.md
+
+# Tests e coverage
+tests/
+.pytest_cache
+.coverage
+htmlcov/
+
+# Outros artefatos locais
+evaluation/
+*.log
+.env
+.env.local
+*.sqlite
+*.db

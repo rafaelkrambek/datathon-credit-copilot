@@ -246,3 +246,44 @@ Implementacao em `src/security/` e auditoria em `evaluation/`.
 Rafael Zampieri — [@rafaelkrambek](https://github.com/rafaelkrambek)
 
 FIAP Pos-Tech Datathon Fase 05, abril 2026.
+
+---
+
+## Docker
+
+Imagem multi-stage (builder + runtime) com usuario nao-root e healthcheck.
+
+### Build
+
+```bash
+docker build -t credit-copilot:latest .
+```
+
+Tempo estimado: 5-8 min (build do venv com LightGBM, torch, etc.).
+
+### Run
+
+```bash
+docker run -d \
+  --name copilot \
+  -p 8000:8000 \
+  -v $(pwd)/data/raw:/app/data/raw:ro \
+  --env-file .env \
+  credit-copilot:latest
+```
+
+> **Importante**: o `data/raw/` (CSVs do Kaggle) precisa ser montado como volume — nao vai dentro da imagem (2.6 GB).
+
+### Verificar saude
+
+```bash
+curl http://localhost:8000/healthz
+docker logs copilot --tail 50
+```
+
+### Parar e limpar
+
+```bash
+docker stop copilot && docker rm copilot
+```
+
