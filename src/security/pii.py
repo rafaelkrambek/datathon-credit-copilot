@@ -4,8 +4,6 @@ from __future__ import annotations
 
 from functools import lru_cache
 
-
-
 # ---------- Recognizers customizados pt_BR ----------
 CPF_PATTERN_REGEX = r"\b\d{3}[.\s]?\d{3}[.\s]?\d{3}[-\s]?\d{2}\b"
 CNPJ_PATTERN_REGEX = r"\b\d{2}[.\s]?\d{3}[.\s]?\d{3}[/\s]?\d{4}[-\s]?\d{2}\b"
@@ -17,6 +15,7 @@ RG_PATTERN_REGEX = r"\b\d{1,2}[.\s]?\d{3}[.\s]?\d{3}[-\s]?[\dXx]\b"
 def _analyzer():
     from presidio_analyzer import AnalyzerEngine, Pattern, PatternRecognizer
     from presidio_analyzer.nlp_engine import NlpEngineProvider
+
     # NLP engine basico — usa spaCy small (rapido)
     config = {
         "nlp_engine_name": "spacy",
@@ -47,6 +46,7 @@ def _analyzer():
 @lru_cache(maxsize=1)
 def _anonymizer():
     from presidio_anonymizer import AnonymizerEngine
+
     return AnonymizerEngine()
 
 
@@ -85,6 +85,7 @@ def mask_pii(text: str) -> tuple[str, list[dict]]:
     )
 
     from presidio_anonymizer.entities import OperatorConfig
+
     operators = {
         "CPF_BR": OperatorConfig("replace", {"new_value": "[CPF]"}),
         "CNPJ_BR": OperatorConfig("replace", {"new_value": "[CNPJ]"}),
