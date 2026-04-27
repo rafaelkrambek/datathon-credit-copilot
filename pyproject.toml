@@ -74,9 +74,6 @@ security = [
     # modelo pt_BR do spaCy vai via script separado
 ]
 
-all = [
-    "credit-copilot[dev,ml,llm,serving,security]",
-]
 
 [build-system]
 requires = ["hatchling"]
