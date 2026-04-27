@@ -287,3 +287,41 @@ docker logs copilot --tail 50
 docker stop copilot && docker rm copilot
 ```
 
+
+---
+
+## Stack de Observabilidade
+
+Stack completa via `docker-compose`:
+
+| Serviço | Porta | URL |
+|---|---|---|
+| API (FastAPI) | 8000 | http://localhost:8000/docs |
+| Prometheus | 9090 | http://localhost:9090 |
+| Grafana | 3000 | http://localhost:3000 (admin/admin) |
+| Langfuse | — | https://us.cloud.langfuse.com (cloud) |
+
+### Subir tudo
+
+```bash
+docker compose up -d
+```
+
+Aguarde ~1 min pro warmup. Depois:
+
+```bash
+docker compose ps        # confere health
+docker compose logs api  # tail dos logs
+```
+
+### Dashboard Grafana
+
+Acessa `http://localhost:3000` (anonimo OK). Vai em **Dashboards → Credit Underwriting Copilot — Observability**. 9 paineis: requests/min, latencia p50/p95/p99, tool calls, PII detectada, guardrails bloqueados.
+
+### Parar
+
+```bash
+docker compose down            # mantem volumes (historico)
+docker compose down -v         # apaga tudo
+```
+

@@ -1,0 +1,72 @@
+# Stack de observabilidade do Credit Underwriting Copilot
+# Sobe: API + Prometheus + Grafana, todos na mesma rede.
+
+services:
+
+  api:
+    build: .
+    image: credit-copilot:latest
+    container_name: copilot_api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      # CSVs do Kaggle (montados pra nao inflar a imagem)
+      - ./data/raw:/app/data/raw:ro
+    networks:
+      - copilot_net
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "http://localhost:8000/healthz"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+
+  prometheus:
+    image: prom/prometheus:v2.55.0
+    container_name: copilot_prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.enable-lifecycle'
+    networks:
+      - copilot_net
+    depends_on:
+      - api
+
+  grafana:
+    image: grafana/grafana:11.3.0
+    container_name: copilot_grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+    volumes:
+      - ./infra/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./infra/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana_data:/var/lib/grafana
+    networks:
+      - copilot_net
+    depends_on:
+      - prometheus
+
+volumes:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  copilot_net:
+    driver: bridge

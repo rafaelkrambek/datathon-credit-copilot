@@ -1,0 +1,19 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'datathon-copilot'
+    env: 'demo'
+
+scrape_configs:
+  - job_name: 'copilot-api'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['api:8000']
+        labels:
+          service: 'credit-underwriting-copilot'
+          version: '0.1.0'
+
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
