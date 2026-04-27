@@ -4,39 +4,19 @@ from __future__ import annotations
 
 from functools import lru_cache
 
-from presidio_analyzer import AnalyzerEngine, Pattern, PatternRecognizer
-from presidio_analyzer.nlp_engine import NlpEngineProvider
-from presidio_anonymizer import AnonymizerEngine
-from presidio_anonymizer.entities import OperatorConfig
+
 
 # ---------- Recognizers customizados pt_BR ----------
-CPF_PATTERN = Pattern(
-    name="cpf_pattern",
-    regex=r"\b\d{3}[.\s]?\d{3}[.\s]?\d{3}[-\s]?\d{2}\b",
-    score=0.9,
-)
-
-CNPJ_PATTERN = Pattern(
-    name="cnpj_pattern",
-    regex=r"\b\d{2}[.\s]?\d{3}[.\s]?\d{3}[/\s]?\d{4}[-\s]?\d{2}\b",
-    score=0.9,
-)
-
-PHONE_BR_PATTERN = Pattern(
-    name="phone_br_pattern",
-    regex=r"\b(?:\+?55\s?)?(?:\(?\d{2}\)?\s?)?\d{4,5}[-\s]?\d{4}\b",
-    score=0.7,
-)
-
-RG_PATTERN = Pattern(
-    name="rg_pattern",
-    regex=r"\b\d{1,2}[.\s]?\d{3}[.\s]?\d{3}[-\s]?[\dXx]\b",
-    score=0.6,
-)
+CPF_PATTERN_REGEX = r"\b\d{3}[.\s]?\d{3}[.\s]?\d{3}[-\s]?\d{2}\b"
+CNPJ_PATTERN_REGEX = r"\b\d{2}[.\s]?\d{3}[.\s]?\d{3}[/\s]?\d{4}[-\s]?\d{2}\b"
+PHONE_BR_PATTERN_REGEX = r"\b(?:\+?55\s?)?(?:\(?\d{2}\)?\s?)?\d{4,5}[-\s]?\d{4}\b"
+RG_PATTERN_REGEX = r"\b\d{1,2}[.\s]?\d{3}[.\s]?\d{3}[-\s]?[\dXx]\b"
 
 
 @lru_cache(maxsize=1)
-def _analyzer() -> AnalyzerEngine:
+def _analyzer():
+    from presidio_analyzer import AnalyzerEngine, Pattern, PatternRecognizer
+    from presidio_analyzer.nlp_engine import NlpEngineProvider
     # NLP engine basico — usa spaCy small (rapido)
     config = {
         "nlp_engine_name": "spacy",
@@ -47,12 +27,13 @@ def _analyzer() -> AnalyzerEngine:
     analyzer = AnalyzerEngine(nlp_engine=nlp_engine, supported_languages=["pt"])
 
     # Adiciona recognizers BR
-    for entity_type, pattern in [
-        ("CPF_BR", CPF_PATTERN),
-        ("CNPJ_BR", CNPJ_PATTERN),
-        ("PHONE_BR", PHONE_BR_PATTERN),
-        ("RG_BR", RG_PATTERN),
+    for entity_type, regex, score in [
+        ("CPF_BR", CPF_PATTERN_REGEX, 0.9),
+        ("CNPJ_BR", CNPJ_PATTERN_REGEX, 0.9),
+        ("PHONE_BR", PHONE_BR_PATTERN_REGEX, 0.7),
+        ("RG_BR", RG_PATTERN_REGEX, 0.6),
     ]:
+        pattern = Pattern(name=f"{entity_type}_pat", regex=regex, score=score)
         recognizer = PatternRecognizer(
             supported_entity=entity_type,
             patterns=[pattern],
@@ -64,7 +45,8 @@ def _analyzer() -> AnalyzerEngine:
 
 
 @lru_cache(maxsize=1)
-def _anonymizer() -> AnonymizerEngine:
+def _anonymizer():
+    from presidio_anonymizer import AnonymizerEngine
     return AnonymizerEngine()
 
 
@@ -102,6 +84,7 @@ def mask_pii(text: str) -> tuple[str, list[dict]]:
         entities=PII_ENTITIES,
     )
 
+    from presidio_anonymizer.entities import OperatorConfig
     operators = {
         "CPF_BR": OperatorConfig("replace", {"new_value": "[CPF]"}),
         "CNPJ_BR": OperatorConfig("replace", {"new_value": "[CNPJ]"}),
