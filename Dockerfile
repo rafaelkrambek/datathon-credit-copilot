@@ -63,8 +63,8 @@ COPY --from=builder /opt/venv /opt/venv
 # Copia codigo e artefatos minimamente necessarios
 COPY --chown=copilot:copilot src/ ./src/
 COPY --chown=copilot:copilot data/knowledge_base/ ./data/knowledge_base/
-COPY --chown=copilot:copilot data/chroma_db/ ./data/chroma_db/
-COPY --chown=copilot:copilot mlruns/ ./mlruns/
+
+# data/chroma_db/ e mlruns/ sao montados via volume em runtime (sao state, nao codigo)
 COPY --chown=copilot:copilot pyproject.toml ./
 
 # IMPORTANTE: data/raw/ NAO entra (sao 2.6GB) — agente precisa montar via volume

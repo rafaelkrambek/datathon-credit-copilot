@@ -15,6 +15,9 @@ services:
     volumes:
       # CSVs do Kaggle (montados pra nao inflar a imagem)
       - ./data/raw:/app/data/raw:ro
+      # State: ChromaDB index + MLflow runs
+      - ./data/chroma_db:/app/data/chroma_db
+      - ./mlruns:/app/mlruns:ro
     networks:
       - copilot_net
     healthcheck:
