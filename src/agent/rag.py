@@ -1,4 +1,5 @@
 """RAG sobre regulatorios brasileiros usando ChromaDB + sentence-transformers."""
+
 from __future__ import annotations
 
 from functools import lru_cache
@@ -32,12 +33,15 @@ def build_index() -> Chroma:
     for md_file in KB_DIR.glob("*.md"):
         text = md_file.read_text(encoding="utf-8")
         for chunk in splitter.split_text(text):
-            docs.append({
-                "page_content": chunk,
-                "metadata": {"source": md_file.name},
-            })
+            docs.append(
+                {
+                    "page_content": chunk,
+                    "metadata": {"source": md_file.name},
+                }
+            )
 
     from langchain_core.documents import Document
+
     documents = [Document(page_content=d["page_content"], metadata=d["metadata"]) for d in docs]
 
     CHROMA_DIR.mkdir(parents=True, exist_ok=True)

@@ -1,4 +1,5 @@
 """Pré-processamento do application_train.csv para baselines."""
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -11,6 +12,7 @@ DATA_DIR = Path("data/raw")
 # Colunas com alto % de missing que serão DROPADAS
 # (identificadas na EDA — XXX_AVG/MEDI/MODE de prédios, >45% missing)
 DROP_BUILDING_COLS = True
+
 
 # Features engineered simples
 def add_engineered_features(df: pd.DataFrame) -> pd.DataFrame:
@@ -40,9 +42,7 @@ def load_and_prepare(path: Path = DATA_DIR / "application_train.csv") -> pd.Data
 
     if DROP_BUILDING_COLS:
         # Remove colunas de características do prédio (XXX_AVG/MEDI/MODE)
-        building_cols = [c for c in df.columns if any(
-            s in c for s in ["_AVG", "_MEDI", "_MODE"]
-        )]
+        building_cols = [c for c in df.columns if any(s in c for s in ["_AVG", "_MEDI", "_MODE"])]
         df = df.drop(columns=building_cols)
 
     df = add_engineered_features(df)

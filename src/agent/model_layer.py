@@ -1,4 +1,5 @@
 """Carrega o LightGBM mais recente do MLflow e expoe predict_proba + SHAP."""
+
 from __future__ import annotations
 
 from functools import lru_cache
@@ -82,7 +83,7 @@ def shap_top_features(features: pd.DataFrame, top_n: int = 5) -> list[dict]:
 
     # Top contribuintes (positivos = aumentam risco)
     pairs = sorted(
-        zip(X.columns, contribs, X.iloc[0].values),
+        zip(X.columns, contribs, X.iloc[0].values, strict=False),
         key=lambda x: abs(x[1]),
         reverse=True,
     )[:top_n]

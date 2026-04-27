@@ -1,12 +1,15 @@
 """Gera notebooks/01_eda.ipynb programaticamente."""
-import nbformat as nbf
+
 from pathlib import Path
+
+import nbformat as nbf
 
 nb = nbf.v4.new_notebook()
 cells = []
 
 # ---------- 0. Título ----------
-cells.append(nbf.v4.new_markdown_cell("""# EDA — Home Credit Default Risk
+cells.append(
+    nbf.v4.new_markdown_cell("""# EDA — Home Credit Default Risk
 
 **Objetivos desta análise:**
 1. Carga e sanidade das 7 tabelas relacionais
@@ -18,13 +21,15 @@ cells.append(nbf.v4.new_markdown_cell("""# EDA — Home Credit Default Risk
 7. Sanidade dos joins entre tabelas (cobertura bureau / previous_application)
 8. Highlights e decisões pro pipeline de ML
 
-**Tabela principal:** `application_train.csv` (307k linhas × 122 colunas)
+**Tabela principal:** `application_train.csv` (307k linhas x 122 colunas)
 **Default rate esperado:** ~8%
-"""))
+""")
+)
 
 # ---------- 1. Imports ----------
 cells.append(nbf.v4.new_markdown_cell("## 1. Setup"))
-cells.append(nbf.v4.new_code_cell("""import pandas as pd
+cells.append(
+    nbf.v4.new_code_cell("""import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -39,22 +44,26 @@ sns.set_theme(style="whitegrid", palette="deep")
 DATA_DIR = Path("../data/raw")
 print(f"Arquivos em {DATA_DIR}:")
 for f in sorted(DATA_DIR.glob("*.csv")):
-    print(f"  {f.name:42s}  {f.stat().st_size / 1e6:>7.1f} MB")"""))
+    print(f"  {f.name:42s}  {f.stat().st_size / 1e6:>7.1f} MB")""")
+)
 
 # ---------- 2. Carga ----------
 cells.append(nbf.v4.new_markdown_cell("## 2. Carga das 7 tabelas"))
-cells.append(nbf.v4.new_code_cell("""tables = {}
+cells.append(
+    nbf.v4.new_code_cell("""tables = {}
 for name in ['application_train', 'application_test', 'bureau', 'bureau_balance',
              'previous_application', 'POS_CASH_balance', 'installments_payments',
              'credit_card_balance']:
     tables[name] = pd.read_csv(DATA_DIR / f"{name}.csv")
     print(f"{name:25s}: {tables[name].shape}")
 
-app = tables['application_train']   # atalho para a tabela principal"""))
+app = tables['application_train']   # atalho para a tabela principal""")
+)
 
 # ---------- 3. TARGET ----------
 cells.append(nbf.v4.new_markdown_cell("## 3. Distribuição do TARGET (class imbalance)"))
-cells.append(nbf.v4.new_code_cell("""print(f"Default rate: {app['TARGET'].mean():.4f}")
+cells.append(
+    nbf.v4.new_code_cell("""print(f"Default rate: {app['TARGET'].mean():.4f}")
 print(app['TARGET'].value_counts().rename({0: 'Pagou (0)', 1: 'Default (1)'}))
 
 fig, ax = plt.subplots(1, 2, figsize=(12, 4))
@@ -67,11 +76,13 @@ ax[1].set_xticklabels(['Pagou', 'Default'], rotation=0)
 plt.tight_layout()
 plt.show()
 
-print("\\n>>> Decisão: class imbalance ~8% — usar class_weight ou scale_pos_weight nos modelos.")"""))
+print("\\n>>> Decisão: class imbalance ~8% — usar class_weight ou scale_pos_weight nos modelos.")""")
+)
 
 # ---------- 4. Missings ----------
 cells.append(nbf.v4.new_markdown_cell("## 4. Missings em application_train"))
-cells.append(nbf.v4.new_code_cell("""missing_pct = (app.isnull().sum() / len(app) * 100).sort_values(ascending=False)
+cells.append(
+    nbf.v4.new_code_cell("""missing_pct = (app.isnull().sum() / len(app) * 100).sort_values(ascending=False)
 top_missing = missing_pct[missing_pct > 0].head(25)
 
 fig, ax = plt.subplots(figsize=(10, 7))
@@ -84,14 +95,18 @@ plt.show()
 
 print(f"Colunas com >50% missing: {(missing_pct > 50).sum()}")
 print(f"Colunas com  >0% missing: {(missing_pct > 0).sum()}")
-print(f"Colunas 100% completas:   {(missing_pct == 0).sum()}")"""))
+print(f"Colunas 100% completas:   {(missing_pct == 0).sum()}")""")
+)
 
 # ---------- 5. EXT_SOURCE ----------
-cells.append(nbf.v4.new_markdown_cell("""## 5. Features-chave — EXT_SOURCE
+cells.append(
+    nbf.v4.new_markdown_cell("""## 5. Features-chave — EXT_SOURCE
 
 Estas são as features **externas de score** (bureau de crédito externo) e historicamente as mais preditivas.
-"""))
-cells.append(nbf.v4.new_code_cell("""ext_cols = ['EXT_SOURCE_1', 'EXT_SOURCE_2', 'EXT_SOURCE_3']
+""")
+)
+cells.append(
+    nbf.v4.new_code_cell("""ext_cols = ['EXT_SOURCE_1', 'EXT_SOURCE_2', 'EXT_SOURCE_3']
 
 fig, axes = plt.subplots(1, 3, figsize=(16, 4))
 for i, col in enumerate(ext_cols):
@@ -108,11 +123,15 @@ print("Correlação EXT_SOURCE com TARGET (mais negativo = mais preditivo):")
 for col in ext_cols:
     corr = app[col].corr(app['TARGET'])
     missing = app[col].isnull().mean() * 100
-    print(f"  {col}: corr={corr:+.4f}  |  missing={missing:5.1f}%")"""))
+    print(f"  {col}: corr={corr:+.4f}  |  missing={missing:5.1f}%")""")
+)
 
 # ---------- 6. Features financeiras ----------
-cells.append(nbf.v4.new_markdown_cell("## 6. Features financeiras — AMT_INCOME, AMT_CREDIT, AMT_ANNUITY"))
-cells.append(nbf.v4.new_code_cell("""money_cols = ['AMT_INCOME_TOTAL', 'AMT_CREDIT', 'AMT_ANNUITY', 'AMT_GOODS_PRICE']
+cells.append(
+    nbf.v4.new_markdown_cell("## 6. Features financeiras — AMT_INCOME, AMT_CREDIT, AMT_ANNUITY")
+)
+cells.append(
+    nbf.v4.new_code_cell("""money_cols = ['AMT_INCOME_TOTAL', 'AMT_CREDIT', 'AMT_ANNUITY', 'AMT_GOODS_PRICE']
 
 fig, axes = plt.subplots(1, 4, figsize=(18, 4))
 for i, col in enumerate(money_cols):
@@ -130,14 +149,18 @@ app['ANNUITY_INCOME_RATIO'] = app['AMT_ANNUITY'] / app['AMT_INCOME_TOTAL']
 print("Correlação com TARGET:")
 for col in money_cols + ['CREDIT_INCOME_RATIO', 'ANNUITY_INCOME_RATIO']:
     corr = app[col].corr(app['TARGET'])
-    print(f"  {col:30s}: {corr:+.4f}")"""))
+    print(f"  {col:30s}: {corr:+.4f}")""")
+)
 
 # ---------- 7. Fairness preview ----------
-cells.append(nbf.v4.new_markdown_cell("""## 7. Fairness preview — TARGET por atributo sensível
+cells.append(
+    nbf.v4.new_markdown_cell("""## 7. Fairness preview — TARGET por atributo sensível
 
 Isso aqui é **crítico pra governança LGPD/Fairlearn**. Vamos olhar se há disparidade de default rate por gênero e escolaridade.
-"""))
-cells.append(nbf.v4.new_code_cell("""# Gender
+""")
+)
+cells.append(
+    nbf.v4.new_code_cell("""# Gender
 gender_stats = app.groupby('CODE_GENDER').agg(
     default_rate=('TARGET', 'mean'),
     n=('TARGET', 'count')
@@ -171,11 +194,15 @@ plt.show()
 
 # Disparate impact preview (razão entre maior e menor taxa)
 print(f"\\n>>> Disparate impact (gênero): {gender_stats['default_rate'].max() / gender_stats['default_rate'].min():.2f}x")
-print(">>> Regra 80% (4/5) — se DI > 1.25, precisa investigar viés.")"""))
+print(">>> Regra 80% (4/5) — se DI > 1.25, precisa investigar viés.")""")
+)
 
 # ---------- 8. Joins sanity ----------
-cells.append(nbf.v4.new_markdown_cell("""## 8. Sanidade dos joins — cobertura de tabelas auxiliares"""))
-cells.append(nbf.v4.new_code_cell("""app_ids = set(app['SK_ID_CURR'])
+cells.append(
+    nbf.v4.new_markdown_cell("""## 8. Sanidade dos joins — cobertura de tabelas auxiliares""")
+)
+cells.append(
+    nbf.v4.new_code_cell("""app_ids = set(app['SK_ID_CURR'])
 bureau_ids = set(tables['bureau']['SK_ID_CURR'])
 prev_ids = set(tables['previous_application']['SK_ID_CURR'])
 
@@ -192,10 +219,12 @@ print(n_bureaus.describe(percentiles=[.5, .75, .9, .95, .99]).round(1))
 
 # Status dos créditos bureau
 print("\\nStatus dos créditos externos (bureau.CREDIT_ACTIVE):")
-print(tables['bureau']['CREDIT_ACTIVE'].value_counts())"""))
+print(tables['bureau']['CREDIT_ACTIVE'].value_counts())""")
+)
 
 # ---------- 9. Insights ----------
-cells.append(nbf.v4.new_markdown_cell("""## 9. Insights e decisões pro pipeline
+cells.append(
+    nbf.v4.new_markdown_cell("""## 9. Insights e decisões pro pipeline
 
 ### Achados principais
 - **Class imbalance ~8%**: usar `class_weight='balanced'` (LogReg) e `scale_pos_weight` (LightGBM).
@@ -214,13 +243,14 @@ cells.append(nbf.v4.new_markdown_cell("""## 9. Insights e decisões pro pipeline
    - Baseline 2: LightGBM (campeão esperado — Gini ~0.55+)
    - Diferencial: MLP PyTorch (para o Datathon mostrar range)
 5. **Métricas de governança**: Disparate Impact Ratio (Fairlearn), Equal Opportunity Difference
-"""))
+""")
+)
 
 # ---------- Salva ----------
-nb['cells'] = cells
+nb["cells"] = cells
 Path("notebooks").mkdir(exist_ok=True)
 out = Path("notebooks/01_eda.ipynb")
-with open(out, 'w') as f:
+with open(out, "w") as f:
     nbf.write(nb, f)
 print(f"\n>>> Notebook criado: {out}")
 print(f">>> Total de cells: {len(cells)}")

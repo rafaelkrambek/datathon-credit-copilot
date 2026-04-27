@@ -1,7 +1,7 @@
 """Detecao e mascaramento de PII (CPF, CNPJ, email, telefone, RG) usando Presidio."""
+
 from __future__ import annotations
 
-import re
 from functools import lru_cache
 
 from presidio_analyzer import AnalyzerEngine, Pattern, PatternRecognizer
@@ -85,7 +85,7 @@ def detect_pii(text: str) -> list[dict]:
             "start": r.start,
             "end": r.end,
             "score": round(r.score, 3),
-            "text": text[r.start:r.end],
+            "text": text[r.start : r.end],
         }
         for r in results
     ]
@@ -121,7 +121,7 @@ def mask_pii(text: str) -> tuple[str, list[dict]]:
         {
             "entity_type": r.entity_type,
             "score": round(r.score, 3),
-            "text": text[r.start:r.end],
+            "text": text[r.start : r.end],
         }
         for r in detected
     ]

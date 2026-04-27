@@ -1,4 +1,5 @@
 """Drift detection minimalista via KS test."""
+
 import json
 from pathlib import Path
 
@@ -10,9 +11,14 @@ OUT = Path("evaluation/drift")
 OUT.mkdir(parents=True, exist_ok=True)
 
 FEATURES = [
-    "EXT_SOURCE_1", "EXT_SOURCE_2", "EXT_SOURCE_3",
-    "AMT_INCOME_TOTAL", "AMT_CREDIT", "AMT_ANNUITY",
-    "DAYS_BIRTH", "DAYS_EMPLOYED",
+    "EXT_SOURCE_1",
+    "EXT_SOURCE_2",
+    "EXT_SOURCE_3",
+    "AMT_INCOME_TOTAL",
+    "AMT_CREDIT",
+    "AMT_ANNUITY",
+    "DAYS_BIRTH",
+    "DAYS_EMPLOYED",
 ]
 
 

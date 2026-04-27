@@ -4,6 +4,7 @@ Uso:
     python -m src.models.train_baseline --model logreg
     python -m src.models.train_baseline --model lgbm
 """
+
 from __future__ import annotations
 
 import argparse
@@ -13,7 +14,6 @@ from pathlib import Path
 import lightgbm as lgb
 import mlflow
 import numpy as np
-import pandas as pd
 from category_encoders import WOEEncoder
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
@@ -63,15 +63,23 @@ def train_logreg(X_train, X_valid, y_train, y_valid, cat_cols, num_cols):
     X_valid_enc = woe.transform(X_valid)
 
     # Pipeline final: impute mediana + scale + logreg balanced
-    pipe = Pipeline([
-        ("impute", SimpleImputer(strategy="median")),
-        ("scale", StandardScaler()),
-        ("clf", LogisticRegression(
-            penalty="l2", C=0.1, solver="lbfgs",
-            class_weight="balanced", max_iter=500,
-            random_state=RANDOM_STATE,
-        )),
-    ])
+    pipe = Pipeline(
+        [
+            ("impute", SimpleImputer(strategy="median")),
+            ("scale", StandardScaler()),
+            (
+                "clf",
+                LogisticRegression(
+                    penalty="l2",
+                    C=0.1,
+                    solver="lbfgs",
+                    class_weight="balanced",
+                    max_iter=500,
+                    random_state=RANDOM_STATE,
+                ),
+            ),
+        ]
+    )
 
     pipe.fit(X_train_enc, y_train)
 
@@ -104,7 +112,8 @@ def train_lgbm(X_train, X_valid, y_train, y_valid, cat_cols, num_cols):
 
     model = lgb.LGBMClassifier(**params, verbose=-1)
     model.fit(
-        X_train, y_train,
+        X_train,
+        y_train,
         eval_set=[(X_valid, y_valid)],
         callbacks=[lgb.early_stopping(50), lgb.log_evaluation(0)],
     )
@@ -125,8 +134,9 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", choices=list(MODEL_REGISTRY.keys()), default="lgbm")
     parser.add_argument("--valid-size", type=float, default=0.2)
-    parser.add_argument("--enriched", action="store_true",
-                        help="Usa features agregadas de todas as tabelas")
+    parser.add_argument(
+        "--enriched", action="store_true", help="Usa features agregadas de todas as tabelas"
+    )
     args = parser.parse_args()
 
     mlflow.set_tracking_uri(MLRUNS_DIR.resolve().as_uri())
@@ -135,6 +145,7 @@ def main():
     print(">>> Carregando e preparando dados...")
     if args.enriched:
         from src.features.preprocess import load_enriched
+
         print(">>> Carregando dataset enriquecido...")
         df = load_enriched()
     else:
@@ -144,27 +155,37 @@ def main():
     print(f"    Num cols: {len(num_cols)} | Cat cols: {len(cat_cols)}")
 
     X_train, X_valid, y_train, y_valid = train_test_split(
-        X, y, test_size=args.valid_size,
-        stratify=y, random_state=RANDOM_STATE,
+        X,
+        y,
+        test_size=args.valid_size,
+        stratify=y,
+        random_state=RANDOM_STATE,
     )
     print(f"    Train: {X_train.shape[0]:,} | Valid: {X_valid.shape[0]:,}")
 
     trainer = MODEL_REGISTRY[args.model]
 
     with mlflow.start_run(run_name=f"{args.model}_baseline"):
-        mlflow.log_params({
-            "model": args.model,
-            "valid_size": args.valid_size,
-            "random_state": RANDOM_STATE,
-            "n_train": len(X_train),
-            "n_valid": len(X_valid),
-            "n_features": X.shape[1],
-            "default_rate_train": y_train.mean(),
-        })
+        mlflow.log_params(
+            {
+                "model": args.model,
+                "valid_size": args.valid_size,
+                "random_state": RANDOM_STATE,
+                "n_train": len(X_train),
+                "n_valid": len(X_valid),
+                "n_features": X.shape[1],
+                "default_rate_train": y_train.mean(),
+            }
+        )
 
         print(f">>> Treinando {args.model}...")
-        model, encoder, y_train_score, y_valid_score = trainer(
-            X_train, X_valid, y_train, y_valid, cat_cols, num_cols,
+        model, _encoder, y_train_score, y_valid_score = trainer(
+            X_train,
+            X_valid,
+            y_train,
+            y_valid,
+            cat_cols,
+            num_cols,
         )
 
         train_metrics = evaluate(y_train.values, y_train_score, "train_")

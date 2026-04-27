@@ -1,4 +1,5 @@
 """Mitigacao de viés via Fairlearn ThresholdOptimizer (Equal Opportunity)."""
+
 from __future__ import annotations
 
 import json
@@ -10,7 +11,7 @@ from sklearn.model_selection import train_test_split
 
 from src.agent.model_layer import _load_latest_lgbm
 from src.features.preprocess import load_enriched
-from src.monitoring.fairness import audit_attribute, THRESHOLD
+from src.monitoring.fairness import THRESHOLD, audit_attribute
 
 OUT_DIR = Path("evaluation/fairness")
 SENSITIVE_ATTR = "CODE_GENDER"
@@ -31,8 +32,12 @@ def run_mitigation():
     X = df.drop(columns=["TARGET", "SK_ID_CURR"])
 
     X_train, X_valid, y_train, y_valid, sens_train, sens_valid = train_test_split(
-        X, y, df[SENSITIVE_ATTR],
-        test_size=0.2, stratify=y, random_state=42,
+        X,
+        y,
+        df[SENSITIVE_ATTR],
+        test_size=0.2,
+        stratify=y,
+        random_state=42,
     )
 
     # categoricals pra LGBM
@@ -83,20 +88,27 @@ def run_mitigation():
         "baseline": base_report,
         "mitigated": mit_report,
         "deltas": {
-            "DIR_delta": round(mit_report["disparate_impact_ratio"]
-                               - base_report["disparate_impact_ratio"], 4),
-            "EOD_delta": round(mit_report["equalized_odds_difference"]
-                               - base_report["equalized_odds_difference"], 4),
+            "DIR_delta": round(
+                mit_report["disparate_impact_ratio"] - base_report["disparate_impact_ratio"], 4
+            ),
+            "EOD_delta": round(
+                mit_report["equalized_odds_difference"] - base_report["equalized_odds_difference"],
+                4,
+            ),
         },
     }
 
     print("\n" + "=" * 60)
     print(f"COMPARATIVO — {SENSITIVE_ATTR}")
     print("=" * 60)
-    print(f"  DIR baseline:  {base_report['disparate_impact_ratio']:+.4f}  "
-          f"(rule 4/5: {'PASS' if base_report['rule_4_5_passes'] else 'FAIL'})")
-    print(f"  DIR mitigado:  {mit_report['disparate_impact_ratio']:+.4f}  "
-          f"(rule 4/5: {'PASS' if mit_report['rule_4_5_passes'] else 'FAIL'})")
+    print(
+        f"  DIR baseline:  {base_report['disparate_impact_ratio']:+.4f}  "
+        f"(rule 4/5: {'PASS' if base_report['rule_4_5_passes'] else 'FAIL'})"
+    )
+    print(
+        f"  DIR mitigado:  {mit_report['disparate_impact_ratio']:+.4f}  "
+        f"(rule 4/5: {'PASS' if mit_report['rule_4_5_passes'] else 'FAIL'})"
+    )
     print(f"  Delta DIR:     {comparison['deltas']['DIR_delta']:+.4f}")
     print()
     print(f"  EOD baseline:  {base_report['equalized_odds_difference']:+.4f}")
@@ -110,6 +122,7 @@ def run_mitigation():
 
     # Persiste o mitigator pra usar no agente (opcional)
     import joblib
+
     joblib.dump(mitigator, OUT_DIR / "threshold_optimizer_gender.pkl")
     print(f">>> ThresholdOptimizer salvo: {OUT_DIR / 'threshold_optimizer_gender.pkl'}")
 

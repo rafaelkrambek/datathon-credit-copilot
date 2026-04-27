@@ -41,15 +41,7 @@ dev = [
     "plotly>=5.24",
 ]
 
-ml = [
-    "torch>=2.4,<2.5",           # MLP PyTorch
-    "mlflow>=2.16",              # tracking + registry
-    "dvc[s3]>=3.55",             # data versioning
-    "evidently>=0.4.33",         # drift monitoring
-    "fairlearn>=0.11",           # fairness audits
-    "shap>=0.46",                # explainability
-    "optuna>=4.0",               # hyperparam tuning
-]
+
 
 llm = [
     "langchain>=0.3,<1.0",

@@ -1,4 +1,5 @@
 """RAGAS eval do RAG: 4 metricas (faithfulness, answer_relevancy, context_precision, context_recall)."""
+
 from __future__ import annotations
 
 import json
@@ -16,7 +17,7 @@ from ragas.metrics import (
     faithfulness,
 )
 
-from src.agent.rag import search, _embeddings
+from src.agent.rag import _embeddings, search
 
 load_dotenv()
 
@@ -70,12 +71,14 @@ def run_ragas():
         answer = generate_answer(llm_answer, item["question"], contexts)
         print(f"    answer: {answer[:80]}...")
 
-        rows.append({
-            "user_input": item["question"],
-            "retrieved_contexts": contexts,
-            "response": answer,
-            "reference": item["ground_truth"],
-        })
+        rows.append(
+            {
+                "user_input": item["question"],
+                "retrieved_contexts": contexts,
+                "response": answer,
+                "reference": item["ground_truth"],
+            }
+        )
 
     print("\n>>> Calculando metricas RAGAS...")
     dataset = Dataset.from_list(rows)
@@ -87,8 +90,8 @@ def run_ragas():
         api_key=os.getenv("GROQ_API_KEY"),
     )
 
-    from ragas.llms import LangchainLLMWrapper
     from ragas.embeddings import LangchainEmbeddingsWrapper
+    from ragas.llms import LangchainLLMWrapper
 
     wrapped_llm = LangchainLLMWrapper(eval_llm)
     wrapped_emb = LangchainEmbeddingsWrapper(_embeddings())
@@ -100,10 +103,11 @@ def run_ragas():
             m.embeddings = wrapped_emb
 
     from ragas.run_config import RunConfig
+
     run_config = RunConfig(
-        timeout=180,         # 3 min por job
+        timeout=180,  # 3 min por job
         max_retries=3,
-        max_workers=1,       # sequencial (sem paralelismo, evita rate limit)
+        max_workers=1,  # sequencial (sem paralelismo, evita rate limit)
         log_tenacity=False,
     )
 
@@ -119,7 +123,9 @@ def run_ragas():
     print("RESUMO RAGAS")
     print("=" * 60)
     df = result.to_pandas()
-    print(df[["faithfulness", "answer_relevancy", "context_precision", "context_recall"]].describe())
+    print(
+        df[["faithfulness", "answer_relevancy", "context_precision", "context_recall"]].describe()
+    )
     print("=" * 60)
 
     df.to_csv(OUT_DIR / "ragas_results.csv", index=False, encoding="utf-8")

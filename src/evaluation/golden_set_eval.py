@@ -1,4 +1,5 @@
 """Avaliacao do agente em golden set de 10 perguntas."""
+
 from __future__ import annotations
 
 import json
@@ -22,10 +23,7 @@ def score_item(item: dict, answer: str, tools_used: list[str]) -> dict:
     answer_norm = normalize(answer)
 
     rec_expected = item.get("expected_recommendation", [])
-    if not rec_expected:
-        rec_match = None
-    else:
-        rec_match = any(normalize(r) in answer_norm for r in rec_expected)
+    rec_match = None if not rec_expected else any(normalize(r) in answer_norm for r in rec_expected)
 
     kws = item.get("expected_keywords", [])
     found = [kw for kw in kws if normalize(kw) in answer_norm]
@@ -65,20 +63,25 @@ def run_eval():
             elapsed = time.perf_counter() - start
 
             score = score_item(item, answer, tools_used)
-            score.update({
-                "id": item["id"],
-                "category": item["category"],
-                "question": item["question"],
-                "answer": answer,
-                "latency_seconds": round(elapsed, 2),
-                "error": None,
-            })
-            print(f"    rec={score['recommendation_match']} | "
-                  f"kw_recall={score['keyword_recall']:.2f} | "
-                  f"tool={score['tool_match']} | {elapsed:.1f}s")
+            score.update(
+                {
+                    "id": item["id"],
+                    "category": item["category"],
+                    "question": item["question"],
+                    "answer": answer,
+                    "latency_seconds": round(elapsed, 2),
+                    "error": None,
+                }
+            )
+            print(
+                f"    rec={score['recommendation_match']} | "
+                f"kw_recall={score['keyword_recall']:.2f} | "
+                f"tool={score['tool_match']} | {elapsed:.1f}s"
+            )
         except Exception as e:
             score = {
-                "id": item["id"], "category": item["category"],
+                "id": item["id"],
+                "category": item["category"],
                 "question": item["question"],
                 "error": str(e),
             }
@@ -86,8 +89,9 @@ def run_eval():
 
         results.append(score)
 
-    rec_scores = [r["recommendation_match"] for r in results
-                  if r.get("recommendation_match") is not None]
+    rec_scores = [
+        r["recommendation_match"] for r in results if r.get("recommendation_match") is not None
+    ]
     kw_scores = [r["keyword_recall"] for r in results if "keyword_recall" in r]
     tool_scores = [r["tool_match"] for r in results if "tool_match" in r]
     latencies = [r["latency_seconds"] for r in results if "latency_seconds" in r]
@@ -95,9 +99,13 @@ def run_eval():
     summary = {
         "n_questions": len(results),
         "n_errors": sum(1 for r in results if r.get("error")),
-        "recommendation_accuracy": round(sum(rec_scores) / len(rec_scores), 3) if rec_scores else None,
+        "recommendation_accuracy": round(sum(rec_scores) / len(rec_scores), 3)
+        if rec_scores
+        else None,
         "mean_keyword_recall": round(sum(kw_scores) / len(kw_scores), 3) if kw_scores else None,
-        "tool_usage_accuracy": round(sum(tool_scores) / len(tool_scores), 3) if tool_scores else None,
+        "tool_usage_accuracy": round(sum(tool_scores) / len(tool_scores), 3)
+        if tool_scores
+        else None,
         "mean_latency_seconds": round(sum(latencies) / len(latencies), 2) if latencies else None,
         "total_latency_seconds": round(sum(latencies), 2) if latencies else None,
     }
@@ -110,10 +118,15 @@ def run_eval():
     print("=" * 60)
 
     out = OUT_DIR / "results.json"
-    out.write_text(json.dumps(
-        {"summary": summary, "results": results},
-        indent=2, ensure_ascii=False, default=str,
-    ))
+    out.write_text(
+        json.dumps(
+            {"summary": summary, "results": results},
+            indent=2,
+            ensure_ascii=False,
+            default=str,
+        ),
+        encoding="utf-8",
+    )
     print(f"\n>>> Salvo em: {out}")
 
 

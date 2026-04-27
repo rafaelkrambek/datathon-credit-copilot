@@ -7,11 +7,11 @@ Estrategia:
   2. REGULATORIO — cita norma correta para o caso (LGPD/Lei 14.181/CMN)
   3. NEGOCIO — recomendacao alinha com o tier de risco e contexto
 """
+
 from __future__ import annotations
 
 import json
 import os
-import re
 import time
 from pathlib import Path
 
@@ -105,9 +105,11 @@ def aggregate(verdicts: list[dict]) -> dict:
         else:
             summary[crit] = {"mean": None, "n": 0}
 
-    summary["overall_mean"] = round(
-        sum(s["mean"] for s in summary.values() if s.get("mean")) / 3, 2
-    ) if all(summary[c].get("mean") for c in ["tecnico", "regulatorio", "negocio"]) else None
+    summary["overall_mean"] = (
+        round(sum(s["mean"] for s in summary.values() if s.get("mean")) / 3, 2)
+        if all(summary[c].get("mean") for c in ["tecnico", "regulatorio", "negocio"])
+        else None
+    )
 
     return summary
 
@@ -115,7 +117,9 @@ def aggregate(verdicts: list[dict]) -> dict:
 def run_judge():
     print(">>> Carregando resultados do golden set...")
     if not RESULTS_PATH.exists():
-        raise RuntimeError(f"{RESULTS_PATH} nao existe. Rode src.evaluation.golden_set_eval primeiro.")
+        raise RuntimeError(
+            f"{RESULTS_PATH} nao existe. Rode src.evaluation.golden_set_eval primeiro."
+        )
 
     try:
         data = json.loads(RESULTS_PATH.read_text(encoding="utf-8"))
@@ -123,7 +127,9 @@ def run_judge():
         data = json.loads(RESULTS_PATH.read_text(encoding="cp1252"))
     results = data["results"]
     valid = [r for r in results if not r.get("error")]
-    print(f">>> {len(valid)} respostas validas para julgamento ({len(results) - len(valid)} com erro foram puladas)\n")
+    print(
+        f">>> {len(valid)} respostas validas para julgamento ({len(results) - len(valid)} com erro foram puladas)\n"
+    )
 
     client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
@@ -156,10 +162,14 @@ def run_judge():
     print("=" * 60)
 
     out = OUT_DIR / "results.json"
-    out.write_text(json.dumps(
-        {"summary": summary, "judged": judged, "judge_model": JUDGE_MODEL},
-        indent=2, ensure_ascii=False, default=str,
-    ))
+    out.write_text(
+        json.dumps(
+            {"summary": summary, "judged": judged, "judge_model": JUDGE_MODEL},
+            indent=2,
+            ensure_ascii=False,
+            default=str,
+        )
+    )
     print(f"\n>>> Salvo em: {out}")
 
 

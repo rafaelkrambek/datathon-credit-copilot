@@ -6,6 +6,7 @@ Metricas:
 - Equal Opportunity Difference (EOD) — diferenca de recall entre grupos
 - Selection rate por grupo
 """
+
 from __future__ import annotations
 
 import json
@@ -103,9 +104,13 @@ def run_audit():
     y = df["TARGET"]
     X = df.drop(columns=["TARGET", "SK_ID_CURR"])
 
-    X_train, X_valid, y_train, y_valid, sens_train, sens_valid = train_test_split(
-        X, y, df[sensitive_attrs],
-        test_size=0.2, stratify=y, random_state=42,
+    _X_train, X_valid, _y_train, y_valid, _sens_train, sens_valid = train_test_split(
+        X,
+        y,
+        df[sensitive_attrs],
+        test_size=0.2,
+        stratify=y,
+        random_state=42,
     )
 
     # Categoricas pro LightGBM
@@ -135,9 +140,11 @@ def run_audit():
         )
         reports["audits"].append(report)
 
-        print(f"    DIR: {report['disparate_impact_ratio']:.3f} | "
-              f"EOD: {report['equalized_odds_difference']:+.3f} | "
-              f"Rule 4/5: {'PASS' if report['rule_4_5_passes'] else 'FAIL'}")
+        print(
+            f"    DIR: {report['disparate_impact_ratio']:.3f} | "
+            f"EOD: {report['equalized_odds_difference']:+.3f} | "
+            f"Rule 4/5: {'PASS' if report['rule_4_5_passes'] else 'FAIL'}"
+        )
         print(f"    {report['interpretation']}")
 
     out = OUT_DIR / "fairness_report.json"

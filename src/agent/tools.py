@@ -1,4 +1,5 @@
 """5 tools do agente Credit Underwriting Copilot."""
+
 from __future__ import annotations
 
 import json
@@ -7,9 +8,13 @@ from langchain_core.tools import tool
 
 from src.agent.data_layer import (
     get_applicant,
-    get_bureau_history as _bureau,
-    get_internal_history as _internal,
     get_features_for_inference,
+)
+from src.agent.data_layer import (
+    get_bureau_history as _bureau,
+)
+from src.agent.data_layer import (
+    get_internal_history as _internal,
 )
 from src.agent.model_layer import predict_pd, shap_top_features
 
@@ -86,6 +91,7 @@ def search_credit_policy(query: str) -> str:
         JSON com top 3 trechos relevantes e suas fontes
     """
     from src.agent.rag import search
+
     results = search(query, k=3)
     return json.dumps({"query": query, "results": results}, ensure_ascii=False)
 

@@ -1,8 +1,8 @@
 """Agente Credit Underwriting Copilot - orquestra as 5 tools via Groq."""
+
 from __future__ import annotations
 
 import os
-from pathlib import Path
 
 from dotenv import load_dotenv
 from langchain.agents import AgentExecutor, create_tool_calling_agent
@@ -63,20 +63,24 @@ def build_agent(model: str | None = None, verbose: bool = True) -> AgentExecutor
         api_key=os.getenv("GROQ_API_KEY"),
     )
 
-    prompt = ChatPromptTemplate.from_messages([
-        ("system", SYSTEM_PROMPT),
-        ("human", "{input}"),
-        ("placeholder", "{agent_scratchpad}"),
-    ])
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            ("system", SYSTEM_PROMPT),
+            ("human", "{input}"),
+            ("placeholder", "{agent_scratchpad}"),
+        ]
+    )
 
     agent = create_tool_calling_agent(llm, ALL_TOOLS, prompt)
     callbacks = []
     if os.getenv("LANGFUSE_SECRET_KEY"):
-        callbacks.append(LangfuseHandler(
-            public_key=os.getenv("LANGFUSE_PUBLIC_KEY"),
-            secret_key=os.getenv("LANGFUSE_SECRET_KEY"),
-            host=os.getenv("LANGFUSE_HOST", "https://us.cloud.langfuse.com"),
-        ))
+        callbacks.append(
+            LangfuseHandler(
+                public_key=os.getenv("LANGFUSE_PUBLIC_KEY"),
+                secret_key=os.getenv("LANGFUSE_SECRET_KEY"),
+                host=os.getenv("LANGFUSE_HOST", "https://us.cloud.langfuse.com"),
+            )
+        )
 
     return AgentExecutor(
         agent=agent,
@@ -101,8 +105,11 @@ def analyze(question: str, model: str | None = None) -> dict:
 
 if __name__ == "__main__":
     import sys
-    question = sys.argv[1] if len(sys.argv) > 1 else (
-        "Analise o cliente SK_ID_CURR 100002 e me de uma recomendacao."
+
+    question = (
+        sys.argv[1]
+        if len(sys.argv) > 1
+        else ("Analise o cliente SK_ID_CURR 100002 e me de uma recomendacao.")
     )
     result = analyze(question)
     print("\n" + "=" * 70)
