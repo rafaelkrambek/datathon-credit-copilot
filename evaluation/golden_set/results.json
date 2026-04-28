@@ -1,12 +1,12 @@
 {
   "summary": {
     "n_questions": 20,
-    "n_errors": 15,
-    "recommendation_accuracy": 0.75,
-    "mean_keyword_recall": 0.7,
+    "n_errors": 7,
+    "recommendation_accuracy": 1.0,
+    "mean_keyword_recall": 0.686,
     "tool_usage_accuracy": 1.0,
-    "mean_latency_seconds": 59.62,
-    "total_latency_seconds": 298.08
+    "mean_latency_seconds": 31.08,
+    "total_latency_seconds": 404.05
   },
   "results": [
     {
@@ -20,9 +20,9 @@
       "keywords_missed": [],
       "tool_match": true,
       "tools_expected": [
-        "get_applicant_profile",
+        "score_and_explain",
         "get_bureau_history",
-        "score_and_explain"
+        "get_applicant_profile"
       ],
       "tools_used": [
         "get_applicant_profile",
@@ -34,24 +34,24 @@
       "id": "G01",
       "category": "default_alto",
       "question": "Avalie o cliente SK_ID_CURR 100002. Pode aprovar?",
-      "answer": "Recomendacao: NEGAR\nTier de risco: MUITO_ALTO\nProbabilidade de default: 83,49%\nJustificativa: O cliente apresenta um histórico de crédito ruim, com 8 créditos ativos e 6 fechados, e uma dívida total de R$ 865.055,55. Além disso, a relação entre a parcela e a renda é alta (24700,5/202500 = 0,122), o que pode indicar um risco de superendividamento. A análise do modelo de risco também indica que o cliente apresenta um alto risco de default (83,49%).\nTop fatores de risco: EXT_SOURCE_MEAN, EXT_SOURCE_3, EXT_SOURCE_1, DAYS_BIRTH, INST_DAYS_LATE_MAX\nFundamento regulatorio: De acordo com a Lei 14.181/2021, o superendividamento é definido como a impossibilidade manifesta de o consumidor pagar a totalidade de suas dívidas de consumo, exigíveis e vincendas, sem comprometer seu mínimo existencial. Além disso, a relação entre a parcela e a renda deve ser verificada para evitar o superendividamento.\nAcao requerida: REQUER ANALISE HUMANA conforme LGPD Art. 20",
-      "latency_seconds": 56.85,
+      "answer": "Recomendacao: NEGAR\nTier de risco: MUITO_ALTO\nProbabilidade de default: 83.49%\nJustificativa: O cliente tem uma probabilidade de default muito alta, de 83.49%, e uma razao parcela/renda de 12.17%, o que e inferior ao limite de 30% estabelecido pela Lei 14.181/2021. AlÃ©m disso, o cliente tem uma divida total de R$ 245.781,00 e um historico de credito com 8 creditos, sendo 2 ativos e 6 fechados.\nTop fatores de risco: EXT_SOURCE_MEAN, EXT_SOURCE_3, EXT_SOURCE_1, DAYS_BIRTH, INST_DAYS_LATE_MAX\nFundamento regulatorio: Lei 14.181/2021, art. 54-A, que define o superendividamento como a impossibilidade manifesta de o consumidor pessoa natural pagar a totalidade de suas dividas de consumo, exigiveis e vincendas, sem comprometer seu minimo existencial.\nAcao requerida: REQUER ANALISE HUMANA conforme LGPD Art. 20, pois a decisao de negar o credito foi baseada em uma avaliacao automatizada e o cliente tem o direito a uma revisao humana da decisao.",
+      "latency_seconds": 41.23,
       "error": null
     },
     {
       "recommendation_match": true,
-      "keyword_recall": 0.333,
+      "keyword_recall": 0.667,
       "keywords_found": [
-        "BAIXO"
+        "BAIXO",
+        "8.85"
       ],
       "keywords_missed": [
-        "8.85",
         "Higher education"
       ],
       "tool_match": true,
       "tools_expected": [
-        "get_applicant_profile",
-        "score_and_explain"
+        "score_and_explain",
+        "get_applicant_profile"
       ],
       "tools_used": [
         "get_applicant_profile",
@@ -63,21 +63,20 @@
       "id": "G02",
       "category": "default_baixo",
       "question": "O cliente SK_ID_CURR 100003 esta apto para credito?",
-      "answer": "Recomendacao: APROVAR\nTier de risco: BAIXO\nProbabilidade de default: 8,85%\nJustificativa: O cliente tem um histórico de crédito positivo, com uma taxa de aprovação de 100% em suas solicitações anteriores. Além disso, o cliente tem uma renda mensal de R$ 22.500,00 e uma parcela de R$ 6.579,00, o que é inferior a 30% da renda mensal. O cliente também não tem dividas vincendas e tem uma reserva de mínimo existencial.\nTop fatores de risco: ORGANIZATION_TYPE, PREV_AMT_ANNUITY_MEAN, EXT_SOURCE_MEAN, NAME_EDUCATION_TYPE, PREV_CNT_PAYMENT_MAX\nFundamento regulatorio: De acordo com a Lei 14.181/2021, o superendividamento é definido como a impossibilidade manifesta de o consumidor pagar a totalidade de suas dividas de consumo, exigíveis e vincendas, sem comprometer seu mínimo existencial. Além disso, a instituição deve verificar a razão parcela/renda e a existência de dividas vincendas antes de conceder um crédito.\nAcao requerida: Nenhuma ação adicional é necessária.",
-      "latency_seconds": 92.12,
+      "answer": "Recomendacao: APROVAR\nTier de risco: BAIXO\nProbabilidade de default: 8.85%\nJustificativa: O cliente tem um perfil socio-demografico e financeiro saudavel, com uma renda total de 270000.0 e um credit_amount de 1293502.5. AlÃ©m disso, o cliente tem um historico de credito externo com 4 creditos, sendo 1 ativo e 3 fechados, e um total de divida de 0.0. O cliente tambem tem um historico interno com 3 aplicacoes anteriores, sendo 3 aprovadas e 0 recusadas. A probabilidade de default do cliente e de 8.85%, o que indica um risco baixo.\nTop fatores de risco: ORGANIZATION_TYPE, PREV_AMT_ANNUITY_MEAN, EXT_SOURCE_MEAN, NAME_EDUCATION_TYPE, PREV_CNT_PAYMENT_MAX\nFundamento regulatorio: A decisao de aprovar o credito esta em conformidade com a Lei 14.181/2021, que define o superendividamento como a impossibilidade manifesta de o consumidor pessoa natural pagar a totalidade de suas dividas de consumo, exigiveis e vincendas, sem comprometer seu minimo existencial. AlÃ©m disso, a instituicao deve verificar a razao parcela/renda (annuity/income) <= 30% (regra geral) e a existencia de dividas vincendas (bureau).\nAcao requerida: NAO REQUER ANALISE HUMANA.",
+      "latency_seconds": 3.04,
       "error": null
     },
     {
       "recommendation_match": true,
-      "keyword_recall": 0.75,
+      "keyword_recall": 1.0,
       "keywords_found": [
         "LGPD",
         "Art. 20",
-        "ANALISE HUMANA"
-      ],
-      "keywords_missed": [
+        "ANALISE HUMANA",
         "revisao"
       ],
+      "keywords_missed": [],
       "tool_match": true,
       "tools_expected": [
         "search_credit_policy"
@@ -92,18 +91,42 @@
       "id": "G03",
       "category": "regulacao_lgpd",
       "question": "Avalie o cliente 100002. Como devo proceder se a recomendacao for negar conforme a LGPD?",
-      "answer": "Recomendacao: NEGAR\nTier de risco: MUITO_ALTO\nProbabilidade de default: 83,49%\nJustificativa: O cliente apresenta um histórico de crédito ruim, com 8 créditos ativos e 6 fechados, e uma dívida total de R$ 245.781,00. Além disso, a relação entre a parcela e a renda é de 247,00% do salário, o que é considerado alto. A análise do modelo de risco também indica que o cliente tem um alto risco de default. Portanto, é recomendável negar a concessão do crédito.\nTop fatores de risco: EXT_SOURCE_MEAN, EXT_SOURCE_3, EXT_SOURCE_1, DAYS_BIRTH, INST_DAYS_LATE_MAX\nFundamento regulatorio: De acordo com a Lei 14.181/2021, o superendividamento é definido como a impossibilidade manifesta de o consumidor pagar a totalidade de suas dívidas de consumo, exigíveis e vincendas, sem comprometer seu mínimo existencial. Além disso, a relação entre a parcela e a renda deve ser de no máximo 30% do salário.\nAcao requerida: REQUER ANALISE HUMANA conforme LGPD Art. 20",
-      "latency_seconds": 36.12,
+      "answer": "Recomendacao: NEGAR\nTier de risco: MUITO_ALTO\nProbabilidade de default: 83.49%\nJustificativa: O cliente tem uma probabilidade de default alta, com um score de 0.8349, e um historico de credito com 8 creditos, sendo 2 ativos e 6 fechados, com uma divida total de 245781.0. AlÃ©m disso, o cliente tem uma renda baixa e um perfil de credito arriscado.\nTop fatores de risco: EXT_SOURCE_MEAN, EXT_SOURCE_3, EXT_SOURCE_1, DAYS_BIRTH, INST_DAYS_LATE_MAX\nFundamento regulatorio: Conforme o Art. 20 da LGPD, o titular dos dados tem direito a solicitar revisao de decisoes automatizadas que afetem seus interesses.\nAcao requerida: REQUER ANALISE HUMANA conforme LGPD Art. 20, pois a decisao de negar o credito foi baseada em um processo automatizado e o cliente tem direito a revisao.",
+      "latency_seconds": 40.2,
       "error": null
     },
     {
+      "recommendation_match": true,
+      "keyword_recall": 0.75,
+      "keywords_found": [
+        "14.181",
+        "parcela",
+        "renda"
+      ],
+      "keywords_missed": [
+        "30%"
+      ],
+      "tool_match": true,
+      "tools_expected": [
+        "get_applicant_profile",
+        "search_credit_policy"
+      ],
+      "tools_used": [
+        "get_applicant_profile",
+        "get_bureau_history",
+        "get_internal_history",
+        "score_and_explain",
+        "search_credit_policy"
+      ],
       "id": "G04",
       "category": "superendividamento",
       "question": "O cliente 100002 esta em risco de superendividamento? Cite a legislacao.",
-      "error": "Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kq2h2094ey7rt567m45jcrd4` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4851, Requested 3745. Please try again in 25.959999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+      "answer": "Recomendacao: REVISAO_MANUAL\nTier de risco: MUITO_ALTO\nProbabilidade de default: 83.49%\nJustificativa: O cliente 100002 apresenta uma probabilidade de default alta (83.49%) e um risco de superendividamento, de acordo com a Lei 14.181/2021. AlÃ©m disso, o cliente tem uma razÃ£o parcela/renda alta (24.7%) e uma divida total significativa (R$ 865.055,65).\nTop fatores de risco: EXT_SOURCE_MEAN, EXT_SOURCE_3, EXT_SOURCE_1, DAYS_BIRTH, INST_DAYS_LATE_MAX\nFundamento regulatorio: Lei 14.181/2021, Art. 54-A, que define o superendividamento como a impossibilidade manifesta de o consumidor pessoa natural pagar a totalidade de suas dividas de consumo, exigiveis e vincendas, sem comprometer seu minimo existencial.\nAcao requerida: REQUER ANALISE HUMANA conforme LGPD Art. 20, devido Ã  alta probabilidade de default e risco de superendividamento.",
+      "latency_seconds": 15.62,
+      "error": null
     },
     {
-      "recommendation_match": false,
+      "recommendation_match": true,
       "keyword_recall": 0.75,
       "keywords_found": [
         "100003",
@@ -115,8 +138,8 @@
       ],
       "tool_match": true,
       "tools_expected": [
-        "get_applicant_profile",
-        "score_and_explain"
+        "score_and_explain",
+        "get_applicant_profile"
       ],
       "tools_used": [
         "get_applicant_profile",
@@ -132,8 +155,8 @@
       "id": "G05",
       "category": "comparacao",
       "question": "Compare os clientes 100002 e 100003. Qual tem menor risco?",
-      "answer": "Recomendacao: REVISAO_MANUAL\nTier de risco: BAIXO\nProbabilidade de default: 8,85%\nJustificativa: O cliente 100003 tem uma probabilidade de default muito baixa (8,85%) e um risco muito baixo, devido a sua idade, emprego e historico de credito. Já o cliente 100002 tem uma probabilidade de default muito alta (83,49%) e um risco muito alto, devido a sua idade, emprego e historico de credito. Além disso, o cliente 100003 tem uma maior estabilidade financeira e uma maior capacidade de pagamento.\nTop fatores de risco: O cliente 100003 tem como principais fatores de risco a organizacao tipo escola e a menor media do anuário, enquanto o cliente 100002 tem como principais fatores de risco a menor media do anuário e a maior quantidade de creditos ativos.\nFundamento regulatorio: De acordo com a Resolucao CMN 4.966/2021, a apuracao de provisao deve considerar a Probability of Default (PD), a Loss Given Default (LGD), a Exposure at Default (EAD) e os efeitos macroeconomicos forward-looking.\nAcao requerida: REQUER ANALISE HUMANA conforme LGPD Art. 20.",
-      "latency_seconds": 72.52,
+      "answer": "Recomendacao: APROVAR\nTier de risco: BAIXO\nProbabilidade de default: 8.85%\nJustificativa: O cliente 100003 tem uma probabilidade de default menor (8.85%) em comparacao com o cliente 100002 (83.49%). AlÃ©m disso, o cliente 100003 tem um historico de credito mais saudavel, com uma maior quantidade de creditos aprovados e um menor valor de divida total.\nTop fatores de risco: ORGANIZATION_TYPE, PREV_AMT_ANNUITY_MEAN, EXT_SOURCE_MEAN, NAME_EDUCATION_TYPE, PREV_CNT_PAYMENT_MAX\nFundamento regulatorio: A Resolucao CMN 4.557/2017 define o risco de credito como a possibilidade de perdas associadas ao nao cumprimento, pelo tomador ou contraparte, de suas respectivas obrigacoes financeiras nos termos pactuados. AlÃ©m disso, a Lei 14.181/21 estabelece a necessidade de avaliacao de capacidade de pagamento do consumidor de forma responsavel, considerando renda, despesas correntes e parcelas ja comprometidas com outros creditos.",
+      "latency_seconds": 27.38,
       "error": null
     },
     {
@@ -151,98 +174,258 @@
         "get_applicant_profile"
       ],
       "tools_used": [
-        "get_applicant_profile"
+        "get_applicant_profile",
+        "get_bureau_history",
+        "get_internal_history",
+        "score_and_explain",
+        "search_credit_policy"
       ],
       "id": "G06",
       "category": "perfil_demografico",
       "question": "Qual o perfil socio-demografico do cliente 100004?",
-      "answer": "O perfil socio-demografico do cliente 100004 é:\n\n- Gênero: Masculino\n- Idade: 52,2 anos\n- Tempo de emprego: 0,6 anos\n- Renda total: R$ 67.500,00\n- Valor do crédito: R$ 135.000,00\n- Anuidade: R$ 6.750,00\n- Preço dos bens: R$ 135.000,00\n- Tipo de contrato: Empréstimos rotativos\n- Nível de educação: Ensino médio\n- Situação familiar: Solteiro\n- Tipo de moradia: Casa/apartamento\n- Fonte externa 1: Nulo\n- Fonte externa 2: 0,5559120833904428\n- Fonte externa 3: 0,7295666907060153",
-      "latency_seconds": 40.47,
+      "answer": "Recomendacao: REVISAO_MANUAL\nTier de risco: ALTO\nProbabilidade de default: 34.34%\nJustificativa: O cliente tem uma probabilidade de default alta, de acordo com o modelo de score. AlÃ©m disso, o histÃ³rico de crÃ©dito do cliente mostra que ele tem uma divida total de R$ 189.037,80 e um total de crÃ©ditos ativos de 2. A renda do cliente Ã© de R$ 67.500,00 e a parcela Ã© de R$ 6.750,00, o que pode ser considerado alto em relaÃ§Ã£o Ã  renda.\nTop fatores de risco: EXT_SOURCE_MEAN, CODE_GENDER, NAME_FAMILY_STATUS, POS_COUNT, AMT_ANNUITY\nFundamento regulatorio: De acordo com a Lei 14.181/2021, o superendividamento Ã© definido como a impossibilidade manifesta de o consumidor pessoa natural, de boa-fÃ©, pagar a totalidade de suas dividas de consumo, exigÃ­veis e vincendas, sem comprometer seu mÃ­nimo existencial. AlÃ©m disso, a CMN 4.557 estabelece que as instituiÃ§Ãµes financeiras devem utilizar modelos internos para gerenciamento de risco de crÃ©dito e devem documentar premissas, validar periodicamente e submeter a backtesting com mÃ©tricas como Gini, KS e PSI.\nAcao requerida: REQUER ANALISE HUMANA conforme LGPD Art. 20",
+      "latency_seconds": 67.11,
       "error": null
     },
     {
+      "recommendation_match": null,
+      "keyword_recall": 0.667,
+      "keywords_found": [
+        "EXT_SOURCE",
+        "fator"
+      ],
+      "keywords_missed": [
+        "SHAP"
+      ],
+      "tool_match": true,
+      "tools_expected": [
+        "score_and_explain"
+      ],
+      "tools_used": [
+        "get_applicant_profile",
+        "get_bureau_history",
+        "get_internal_history",
+        "score_and_explain",
+        "search_credit_policy"
+      ],
       "id": "G07",
       "category": "explicabilidade",
       "question": "Quais sao os principais fatores que influenciam o risco do cliente 100002?",
-      "error": "Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kq2h2094ey7rt567m45jcrd4` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5611, Requested 2110. Please try again in 17.21s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+      "answer": "Recomendacao: REVISAO_MANUAL\nTier de risco: MUITO_ALTO\nProbabilidade de default: 83.49%\nJustificativa: O cliente 100002 apresenta um alto risco de default, com uma probabilidade de 83.49%. Isso se deve a fatores como a baixa idade, a falta de experiencia no mercado de trabalho e a alta divida total. AlÃ©m disso, o cliente tem um historico de credito com varios creditos ativos e fechados, o que pode indicar uma gestao de risco de credito inadequada.\nTop fatores de risco: EXT_SOURCE_MEAN, EXT_SOURCE_3, EXT_SOURCE_1, DAYS_BIRTH, INST_DAYS_LATE_MAX\nFundamento regulatorio: A Resolucao CMN 4.557/2017 define o risco de credito como a possibilidade de perdas associadas ao nao cumprimento, pelo tomador ou contraparte, de suas respectivas obrigacoes financeiras nos termos pactuados. AlÃ©m disso, a Lei 14.181/21 proibe praticas vedadas na oferta de credito ao consumidor, como fazer publicidade que indique credito sem juros ou assediar o consumidor.\nAcao requerida: REQUER ANALISE HUMANA conforme LGPD Art. 20, pois a decisao de negar o credito ao cliente 100002 deve ser fundamentada em uma analise mais detalhada e personalizada, considerando as especificidades do caso e as normas regulatorias aplicaveis.",
+      "latency_seconds": 24.34,
+      "error": null
     },
     {
+      "recommendation_match": null,
+      "keyword_recall": 0.667,
+      "keywords_found": [
+        "credito",
+        "8"
+      ],
+      "keywords_missed": [
+        "bureau"
+      ],
+      "tool_match": true,
+      "tools_expected": [
+        "get_bureau_history"
+      ],
+      "tools_used": [
+        "get_bureau_history",
+        "get_applicant_profile",
+        "get_internal_history",
+        "score_and_explain",
+        "search_credit_policy"
+      ],
       "id": "G08",
       "category": "historico_externo",
       "question": "O cliente 100002 tem historico de credito externo?",
-      "error": "Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kq2h2094ey7rt567m45jcrd4` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5634, Requested 2102. Please try again in 17.36s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+      "answer": "Recomendacao: NEGAR\nTier de risco: MUITO_ALTO\nProbabilidade de default: 83%\nJustificativa: O cliente 100002 tem uma probabilidade de default alta (83%), uma razao parcela/renda alta (24,7%) e uma divida total alta (R$ 245.781,00). AlÃ©m disso, o cliente tem um historico de credito externo com 8 creditos ativos e fechados, o que aumenta o risco de superendividamento.\nTop fatores de risco: EXT_SOURCE_MEAN, EXT_SOURCE_3, EXT_SOURCE_1, DAYS_BIRTH, INST_DAYS_LATE_MAX\nFundamento regulatorio: A Lei 14.181/2021 define o superendividamento como a impossibilidade manifesta de o consumidor pagar a totalidade de suas dividas de consumo, exigiveis e vincendas, sem comprometer seu minimo existencial. AlÃ©m disso, a CMN 4.557 estabelece que as instituicoes financeiras devem gerenciar o risco de credito de forma eficaz e eficiente.\nAcao requerida: REQUER ANALISE HUMANA conforme LGPD Art. 20, pois a decisao de negar o credito foi baseada em uma avaliacao automatizada e o cliente tem o direito de revisao humana.",
+      "latency_seconds": 66.29,
+      "error": null
     },
     {
+      "recommendation_match": true,
+      "keyword_recall": 1.0,
+      "keywords_found": [
+        "4.966",
+        "PD",
+        "LGD"
+      ],
+      "keywords_missed": [],
+      "tool_match": true,
+      "tools_expected": [
+        "score_and_explain",
+        "search_credit_policy"
+      ],
+      "tools_used": [
+        "get_applicant_profile",
+        "get_bureau_history",
+        "get_internal_history",
+        "score_and_explain",
+        "search_credit_policy"
+      ],
       "id": "G09",
       "category": "metodologia_provisao",
       "question": "Avalie o cliente 100002 e cite a metodologia regulatoria de provisao para perdas.",
-      "error": "Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kq2h2094ey7rt567m45jcrd4` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5388, Requested 2111. Please try again in 14.99s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+      "answer": "Recomendacao: REVISAO_MANUAL\nTier de risco: MUITO_ALTO\nProbabilidade de default: 83.49%\nJustificativa: O cliente 100002 tem uma probabilidade de default alta (83.49%) e um historico de credito com 8 creditos, sendo 2 ativos e 6 fechados, com uma divida total de R$ 245.781,00. AlÃ©m disso, o cliente tem uma renda total de R$ 202.500,00 e um valor de credito de R$ 406.597,50.\nTop fatores de risco: EXT_SOURCE_MEAN, EXT_SOURCE_3, EXT_SOURCE_1, DAYS_BIRTH, INST_DAYS_LATE_MAX\nFundamento regulatorio: A ResoluÃ§Ã£o CMN 4.966/2021 estabelece que a apuraÃ§Ã£o de provisÃ£o deve considerar a Probability of Default (PD), Loss Given Default (LGD), Exposure at Default (EAD) e efeitos macroeconomicos forward-looking.\nAcao requerida: REQUER ANALISE HUMANA conforme LGPD Art. 20, devido Ã  alta probabilidade de default e ao historico de credito do cliente.",
+      "latency_seconds": 24.62,
+      "error": null
     },
     {
+      "recommendation_match": null,
+      "keyword_recall": 0.0,
+      "keywords_found": [],
+      "keywords_missed": [
+        "nao encontrado",
+        "nao existe",
+        "indisponivel"
+      ],
+      "tool_match": true,
+      "tools_expected": [
+        "get_applicant_profile"
+      ],
+      "tools_used": [
+        "get_applicant_profile",
+        "get_bureau_history",
+        "get_internal_history",
+        "score_and_explain",
+        "search_credit_policy"
+      ],
       "id": "G10",
       "category": "cliente_inexistente",
       "question": "Avalie o cliente SK_ID_CURR 99999999.",
-      "error": "Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kq2h2094ey7rt567m45jcrd4` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5541, Requested 1992. Please try again in 15.33s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+      "answer": "Recomendacao: REVISAO_MANUAL\nTier de risco: MUITO_ALTO\nProbabilidade de default: NAO DISPONIVEL\nJustificativa: O cliente 99999999 nao foi encontrado no sistema, nao tem historico de credito e nao tem features para predicao.\nTop fatores de risco: NAO DISPONIVEL\nFundamento regulatorio: De acordo com a Lei 14.181/21, e importante verificar a razao parcela/renda e a existencia de dividas vincendas antes de conceder credito.\nAcao requerida: REQUER ANALISE HUMANA conforme LGPD Art. 20",
+      "latency_seconds": 20.73,
+      "error": null
     },
     {
+      "recommendation_match": null,
+      "keyword_recall": 0.25,
+      "keywords_found": [
+        "genero"
+      ],
+      "keywords_missed": [
+        "fairness",
+        "vies",
+        "auditar"
+      ],
+      "tool_match": true,
+      "tools_expected": [
+        "score_and_explain",
+        "get_applicant_profile"
+      ],
+      "tools_used": [
+        "get_applicant_profile",
+        "get_bureau_history",
+        "get_internal_history",
+        "score_and_explain",
+        "search_credit_policy"
+      ],
       "id": "G11",
       "category": "fairness",
       "question": "Avalie o cliente 100007. O modelo poderia estar discriminando por genero?",
-      "error": "Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kq2h2094ey7rt567m45jcrd4` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5097, Requested 2108. Please try again in 12.05s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+      "answer": "Recomendacao: REVISAO_MANUAL\nTier de risco: MUITO_ALTO\nProbabilidade de default: 46.96%\nJustificativa: O cliente 100007 tem uma probabilidade de default alta, de 46.96%, de acordo com o modelo de score. AlÃ©m disso, o histÃ³rico de crÃ©dito do cliente mostra que ele tem um crÃ©dito ativo e um total de dÃ­vida de R$ 0,00. No entanto, o modelo pode estar discriminando por gÃªnero, pois a feature \"CODE_GENDER\" estÃ¡ presente nos top features do SHAP com um valor de shap de 0.2124, o que pode indicar que o gÃªnero do cliente estÃ¡ influenciando a decisÃ£o de crÃ©dito.\nTop fatores de risco: EXT_SOURCE_MEAN, ORGANIZATION_TYPE, CODE_GENDER, PREV_CNT_PAYMENT_MAX, EXT_SOURCE_3\nFundamento regulatorio: De acordo com a LGPD, Ã© vedado discriminar o consumidor por gÃªnero, raÃ§a, religiÃ£o, entre outros. AlÃ©m disso, a ResoluÃ§Ã£o CMN 4.557/2017 estabelece que as instituiÃ§Ãµes financeiras devem avaliar a capacidade de pagamento do consumidor de forma responsÃ¡vel, considerando renda, despesas correntes e parcelas jÃ¡ comprometidas com outros crÃ©ditos.\nAcao requerida: REQUER ANALISE HUMANA conforme LGPD Art. 20, para avaliar se o modelo de score estÃ¡ discriminando o cliente por gÃªnero e se a decisÃ£o de crÃ©dito estÃ¡ em conformidade com as normas regulatÃ³rias.",
+      "latency_seconds": 24.61,
+      "error": null
     },
     {
+      "recommendation_match": true,
+      "keyword_recall": 0.5,
+      "keywords_found": [
+        "tier"
+      ],
+      "keywords_missed": [
+        "EXT_SOURCE"
+      ],
+      "tool_match": true,
+      "tools_expected": [
+        "score_and_explain",
+        "get_applicant_profile"
+      ],
+      "tools_used": [
+        "get_applicant_profile",
+        "get_bureau_history",
+        "get_internal_history",
+        "score_and_explain",
+        "search_credit_policy"
+      ],
       "id": "G12",
       "category": "default_borderline",
       "question": "Avalie o cliente 100008. Esta na fronteira de aprovacao?",
-      "error": "Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kq2h2094ey7rt567m45jcrd4` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5024, Requested 2107. Please try again in 11.31s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+      "answer": "Recomendacao: REVISAO_MANUAL\nTier de risco: ALTO\nProbabilidade de default: 33.82%\nJustificativa: O cliente 100008 tem uma probabilidade de default de 33.82%, o que indica um risco alto. AlÃ©m disso, a razÃ£o parcela/renda Ã© de 27.72%, o que estÃ¡ prÃ³xima do limite de 30% estabelecido pela Lei 14.181/2021. O cliente tambÃ©m tem uma divida total de R$ 240.057,00 e um histÃ³rico de crÃ©dito com 3 crÃ©ditos ativos e 2 fechados.\nTop fatores de risco: GÃªnero, dias desde a Ãºltima mudanÃ§a de telefone, dias de atraso mÃ¡ximo, contagem de posse e idade do carro prÃ³prio.\nFundamento regulatorio: A Lei 14.181/2021 estabelece que a razÃ£o parcela/renda nÃ£o deve ultrapassar 30% e que a instituiÃ§Ã£o financeira deve verificar a existÃªncia de dÃ­vidas vincendas e a reserva de mÃ­nimo existencial.\nAcao requerida: REQUER ANALISE HUMANA conforme LGPD Art. 20, pois a decisÃ£o de concessÃ£o de crÃ©dito depende de uma avaliaÃ§Ã£o mais detalhada do perfil do cliente e do histÃ³rico de crÃ©dito.",
+      "latency_seconds": 24.79,
+      "error": null
     },
     {
+      "recommendation_match": null,
+      "keyword_recall": 1.0,
+      "keywords_found": [
+        "parcela",
+        "renda",
+        "30%",
+        "14.181"
+      ],
+      "keywords_missed": [],
+      "tool_match": true,
+      "tools_expected": [
+        "get_applicant_profile",
+        "search_credit_policy"
+      ],
+      "tools_used": [
+        "get_applicant_profile",
+        "get_bureau_history",
+        "get_internal_history",
+        "score_and_explain",
+        "search_credit_policy"
+      ],
       "id": "G13",
       "category": "afford_calc",
       "question": "Para o cliente 100003, qual a razao parcela/renda? Esta dentro do limite regulatorio?",
-      "error": "Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kq2h2094ey7rt567m45jcrd4` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4701, Requested 3748. Please try again in 24.49s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+      "answer": "Recomendacao: APROVAR\nTier de risco: BAIXO\nProbabilidade de default: 8.85%\nJustificativa: O cliente 100003 tem uma razao parcela/renda de 13.2% (35698.5 / 270000.0), que esta dentro do limite regulatorio de 30%. AlÃ©m disso, o cliente tem uma probabilidade de default baixa (8.85%) e um historico de credito positivo, com apenas uma divida ativa e nenhuma divida em atraso.\nTop fatores de risco: ORGANIZATION_TYPE, PREV_AMT_ANNUITY_MEAN, EXT_SOURCE_MEAN, NAME_EDUCATION_TYPE, PREV_CNT_PAYMENT_MAX\nFundamento regulatorio: A Lei 14.181/21 estabelece que a razao parcela/renda deve ser avaliada como parte da capacidade de pagamento do consumidor, e que o limite de 30% deve ser respeitado. AlÃ©m disso, a CMN 4.557 estabelece que as instituiÃ§Ãµes financeiras devem utilizar modelos internos para gerenciamento de risco de credito e avaliar a capacidade de pagamento do consumidor de forma responsavel.\nAcao requerida: Nenhuma acao adicional Ã© necessaria, pois a recomendacao e para aprovar o credito.",
+      "latency_seconds": 24.09,
+      "error": null
     },
     {
       "id": "G14",
       "category": "historico_interno",
       "question": "O cliente 100004 ja tomou credito conosco antes? Qual o desempenho?",
-      "error": "Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kq2h2094ey7rt567m45jcrd4` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5289, Requested 1772. Please try again in 10.61s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+      "error": "Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kq2h2094ey7rt567m45jcrd4` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 97632, Requested 3086. Please try again in 10m20.352s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
     },
     {
       "id": "G15",
       "category": "scr_acesso",
       "question": "Que regulamentacao garante ao cliente 100002 o acesso aos dados do SCR?",
-      "error": "Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kq2h2094ey7rt567m45jcrd4` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5182, Requested 2106. Please try again in 12.88s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+      "error": "Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kq2h2094ey7rt567m45jcrd4` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99338, Requested 2377. Please try again in 24m41.759999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
     },
     {
       "id": "G16",
       "category": "credito_alto_renda",
       "question": "O cliente 100002 esta solicitando credito compativel com sua renda? Avalie.",
-      "error": "Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kq2h2094ey7rt567m45jcrd4` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5473, Requested 3182. Please try again in 26.55s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+      "error": "Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kq2h2094ey7rt567m45jcrd4` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99338, Requested 2057. Please try again in 20m5.28s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
     },
     {
       "id": "G17",
       "category": "decisao_negocio",
       "question": "Tenho orcamento limitado para conceder credito hoje. Entre os clientes 100003 e 100002, qual devo priorizar?",
-      "error": "Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kq2h2094ey7rt567m45jcrd4` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4897, Requested 2016. Please try again in 9.13s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+      "error": "Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kq2h2094ey7rt567m45jcrd4` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99337, Requested 2067. Please try again in 20m13.056s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
     },
     {
       "id": "G18",
       "category": "modelo_validacao",
       "question": "Que metricas o regulador exige para validar modelos internos de risco de credito?",
-      "error": "Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kq2h2094ey7rt567m45jcrd4` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5564, Requested 2098. Please try again in 16.62s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+      "error": "Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kq2h2094ey7rt567m45jcrd4` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99337, Requested 2057. Please try again in 20m4.416s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
     },
     {
       "id": "G19",
       "category": "bureau_atraso",
       "question": "O cliente 100002 tem creditos em atraso no bureau? Como isso afeta a decisao?",
-      "error": "Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kq2h2094ey7rt567m45jcrd4` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5086, Requested 2101. Please try again in 11.87s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+      "error": "Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kq2h2094ey7rt567m45jcrd4` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99337, Requested 2028. Please try again in 19m39.36s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
     },
     {
       "id": "G20",
       "category": "estagio_credito",
       "question": "Avalie o cliente 100002. Se aprovado, em qual estagio de credito (CMN 4.966) ele se enquadraria?",
-      "error": "Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kq2h2094ey7rt567m45jcrd4` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4907, Requested 2114. Please try again in 10.21s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+      "error": "Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kq2h2094ey7rt567m45jcrd4` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99337, Requested 2073. Please try again in 20m18.24s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
     }
   ]
 }

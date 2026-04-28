@@ -249,6 +249,25 @@ FIAP Pos-Tech Datathon Fase 05, abril 2026.
 
 ---
 
+
+
+## Resultados da avaliação (golden set 20 perguntas)
+
+| Métrica | Valor | Notas |
+|---|---|---|
+| Recommendation accuracy | 100% | 5/5 perguntas com expected_recommendation acertaram |
+| Keyword recall | 68.6% | mean across 13 valid runs |
+| Tool usage accuracy | 100% | agente sempre chamou as tools corretas |
+| LLM-as-judge — Técnico | 4.62/5 | 13/13 julgadas |
+| LLM-as-judge — Regulatório | 4.92/5 | quase perfeito (RAG citando lei correta) |
+| LLM-as-judge — Negócio | 4.46/5 | recomendação alinhada com tier de risco |
+| **LLM-as-judge — Overall** | **4.67/5** | n=13 |
+| RAGAS faithfulness | 0.75 | 75% das claims fundamentadas no contexto |
+| RAGAS context_precision | 0.75 | chunks relevantes |
+| RAGAS context_recall | 0.69 | 69% do esperado nos contextos |
+
+7 perguntas das 20 ficaram pendentes (rate limit TPD do free tier do Groq). Todas as 5 perguntas com recomendação esperada (APROVAR/NEGAR) foram acertadas.
+
 ## Docker
 
 Imagem multi-stage (builder + runtime) com usuario nao-root e healthcheck.

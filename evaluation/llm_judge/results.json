@@ -1,39 +1,39 @@
 {
   "summary": {
     "tecnico": {
-      "mean": 5.0,
-      "n": 3,
+      "mean": 4.62,
+      "n": 13,
       "distribution": {
         "1": 0,
-        "2": 0,
+        "2": 1,
         "3": 0,
-        "4": 0,
-        "5": 3
+        "4": 2,
+        "5": 10
       }
     },
     "regulatorio": {
-      "mean": 5.0,
-      "n": 3,
+      "mean": 4.92,
+      "n": 13,
       "distribution": {
         "1": 0,
         "2": 0,
         "3": 0,
-        "4": 0,
-        "5": 3
+        "4": 1,
+        "5": 12
       }
     },
     "negocio": {
-      "mean": 4.33,
-      "n": 3,
+      "mean": 4.46,
+      "n": 13,
       "distribution": {
         "1": 0,
         "2": 0,
         "3": 0,
-        "4": 2,
-        "5": 1
+        "4": 7,
+        "5": 6
       }
     },
-    "overall_mean": 4.78
+    "overall_mean": 4.67
   },
   "judged": [
     {
@@ -64,11 +64,11 @@
         },
         "regulatorio": {
           "score": 5,
-          "justificativa": "A resposta cita a Lei 14.181/21 e a regra geral de anuidade/renda <= 30% de forma correta e pertinente."
+          "justificativa": "A resposta cita a Lei 14.181/2021 como fundamento regulatorio, de forma pertinente e com número da lei."
         },
         "negocio": {
           "score": 4,
-          "justificativa": "A recomendação de aprovar o crédito é coerente com o risco baixo, mas a falta de análise humana pode ser questionável."
+          "justificativa": "A recomendação de aprovar o crédito é coerente com o risco, mas a análise humana não é necessária, o que poderia ser um ponto de melhoria."
         }
       }
     },
@@ -78,7 +78,7 @@
       "verdict": {
         "tecnico": {
           "score": 5,
-          "justificativa": "A resposta utiliza dados precisos e consistentes com as ferramentas utilizadas."
+          "justificativa": "A resposta utiliza dados precisos e consistentes com as ferramentas chamadas."
         },
         "regulatorio": {
           "score": 5,
@@ -86,7 +86,187 @@
         },
         "negocio": {
           "score": 5,
-          "justificativa": "A recomendação de negar o crédito é coerente com o risco de default muito alto do cliente."
+          "justificativa": "A recomendação de negar o crédito é coerente com o risco de default do cliente."
+        }
+      }
+    },
+    {
+      "id": "G04",
+      "question": "O cliente 100002 esta em risco de superendividamento? Cite a legislacao.",
+      "verdict": {
+        "tecnico": {
+          "score": 5,
+          "justificativa": "A resposta apresenta dados precisos e relevantes, incluindo a probabilidade de default e a razão parcela/renda."
+        },
+        "regulatorio": {
+          "score": 5,
+          "justificativa": "A resposta cita a Lei 14.181/2021, Art. 54-A, como fundamento regulatorio, que é a norma jurídica correta para o caso."
+        },
+        "negocio": {
+          "score": 5,
+          "justificativa": "A recomendação de REVISAO_MANUAL é coerente com o risco de superendividamento do cliente, considerando a alta probabilidade de default e a razão parcela/renda."
+        }
+      }
+    },
+    {
+      "id": "G05",
+      "question": "Compare os clientes 100002 e 100003. Qual tem menor risco?",
+      "verdict": {
+        "tecnico": {
+          "score": 5,
+          "justificativa": "A resposta apresenta dados precisos e consistentes com as ferramentas utilizadas."
+        },
+        "regulatorio": {
+          "score": 5,
+          "justificativa": "A resposta cita normas jurídicas corretas e relevantes para o caso."
+        },
+        "negocio": {
+          "score": 4,
+          "justificativa": "A recomendação é coerente com o risco, mas poderia ser mais precisa na avaliação do cliente 100002."
+        }
+      }
+    },
+    {
+      "id": "G06",
+      "question": "Qual o perfil socio-demografico do cliente 100004?",
+      "verdict": {
+        "tecnico": {
+          "score": 4,
+          "justificativa": "A resposta apresenta dados precisos, como a probabilidade de default e o histórico de crédito do cliente, mas não cita explicitamente a fonte desses dados."
+        },
+        "regulatorio": {
+          "score": 5,
+          "justificativa": "A resposta cita corretamente a Lei 14.181/2021 e a CMN 4.557, além de aplicar corretamente a LGPD Art. 20."
+        },
+        "negocio": {
+          "score": 4,
+          "justificativa": "A recomendação de REVISAO_MANUAL é coerente com o risco, mas não há uma justificativa explícita para a escolha desse curso de ação."
+        }
+      }
+    },
+    {
+      "id": "G07",
+      "question": "Quais sao os principais fatores que influenciam o risco do cliente 100002?",
+      "verdict": {
+        "tecnico": {
+          "score": 5,
+          "justificativa": "A resposta apresenta dados precisos e consistentes com as ferramentas utilizadas."
+        },
+        "regulatorio": {
+          "score": 5,
+          "justificativa": "A resposta cita normas jurídicas corretas e relevantes para o caso, como a Resolução CMN 4.557/2017 e a Lei 14.181/21."
+        },
+        "negocio": {
+          "score": 5,
+          "justificativa": "A recomendação de REVISÃO_MANUAL é coerente com o risco do cliente, considerando a probabilidade de default de 83.49% e a necessidade de análise humana conforme LGPD Art. 20."
+        }
+      }
+    },
+    {
+      "id": "G08",
+      "question": "O cliente 100002 tem historico de credito externo?",
+      "verdict": {
+        "tecnico": {
+          "score": 5,
+          "justificativa": "A resposta apresenta dados precisos e consistentes com as ferramentas utilizadas."
+        },
+        "regulatorio": {
+          "score": 5,
+          "justificativa": "A resposta cita normas jurídicas corretas e relevantes para o caso, como a Lei 14.181/2021 e a CMN 4.557."
+        },
+        "negocio": {
+          "score": 4,
+          "justificativa": "A recomendação de negar o crédito é coerente com o risco, mas a justificativa poderia ser mais detalhada e clara."
+        }
+      }
+    },
+    {
+      "id": "G09",
+      "question": "Avalie o cliente 100002 e cite a metodologia regulatoria de provisao para perdas.",
+      "verdict": {
+        "tecnico": {
+          "score": 5,
+          "justificativa": "A resposta utiliza números e dados precisos das ferramentas, como a probabilidade de default e o histórico de crédito do cliente."
+        },
+        "regulatorio": {
+          "score": 5,
+          "justificativa": "A resposta cita a Resolução CMN 4.966/2021 como fundamento regulatorio para a apuração de provisão, o que é correto e pertinente."
+        },
+        "negocio": {
+          "score": 4,
+          "justificativa": "A recomendação de REVISÃO_MANUAL é coerente com o risco, mas poderia ser mais específica em relação à necessidade de análise humana devido à LGPD Art. 20."
+        }
+      }
+    },
+    {
+      "id": "G10",
+      "question": "Avalie o cliente SK_ID_CURR 99999999.",
+      "verdict": {
+        "tecnico": {
+          "score": 2,
+          "justificativa": "A resposta contém invenção de dados (cliente não encontrado no sistema) e falta de dados precisos (probabilidade de default não disponível)"
+        },
+        "regulatorio": {
+          "score": 4,
+          "justificativa": "A resposta cita a Lei 14.181/21 de forma pertinente e com número da lei"
+        },
+        "negocio": {
+          "score": 5,
+          "justificativa": "A recomendação (REVISAO_MANUAL) é coerente com o risco (MUITO_ALTO) e segue a LGPD Art. 20"
+        }
+      }
+    },
+    {
+      "id": "G11",
+      "question": "Avalie o cliente 100007. O modelo poderia estar discriminando por genero?",
+      "verdict": {
+        "tecnico": {
+          "score": 4,
+          "justificativa": "A resposta apresenta dados precisos, mas a justificativa sobre a possível discriminação por gênero não é clara e pode ser considerada vaga."
+        },
+        "regulatorio": {
+          "score": 5,
+          "justificativa": "A resposta cita a LGPD e a Resolução CMN 4.557/2017 de forma correta e pertinente."
+        },
+        "negocio": {
+          "score": 5,
+          "justificativa": "A recomendação de REVISAO_MANUAL é coerente com o risco de default do cliente e a LGPD."
+        }
+      }
+    },
+    {
+      "id": "G12",
+      "question": "Avalie o cliente 100008. Esta na fronteira de aprovacao?",
+      "verdict": {
+        "tecnico": {
+          "score": 5,
+          "justificativa": "A resposta utiliza números e dados precisos das ferramentas, sem invenção de dados ou contradições."
+        },
+        "regulatorio": {
+          "score": 5,
+          "justificativa": "A resposta cita a Lei 14.181/2021 e o Art. 20 da LGPD de forma pertinente e com número da lei/artigo."
+        },
+        "negocio": {
+          "score": 4,
+          "justificativa": "A recomendação de REVISÃO_MANUAL é coerente com o risco, mas poderia ser mais explícita na justificativa."
+        }
+      }
+    },
+    {
+      "id": "G13",
+      "question": "Para o cliente 100003, qual a razao parcela/renda? Esta dentro do limite regulatorio?",
+      "verdict": {
+        "tecnico": {
+          "score": 5,
+          "justificativa": "A resposta apresenta dados precisos e consistentes com as ferramentas utilizadas."
+        },
+        "regulatorio": {
+          "score": 5,
+          "justificativa": "A resposta cita normas jurídicas corretas e pertinentes para o caso, como a Lei 14.181/21 e a CMN 4.557."
+        },
+        "negocio": {
+          "score": 5,
+          "justificativa": "A recomendação é coerente com o risco, pois o cliente tem uma probabilidade de default baixa e uma razão parcela/renda dentro do limite regulatorio."
         }
       }
     }
