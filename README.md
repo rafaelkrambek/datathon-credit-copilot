@@ -201,53 +201,10 @@ mlflow ui --workers 1 --host 127.0.0.1 --port 5000
 
 **Interpretação**: baseline LogReg já entrega KS ~0.37 (regulador brasileiro considera ≥0.30 como aceitável para crédito de consumo). O Gini de 0.50 é competitivo para um modelo lean sem as agregações das outras tabelas.
 
----
 
-## Roadmap (6 dias)
-
-- **Dia 1** — Setup, EDA, baselines, feature engineering ✅
-- **Dia 2** — LightGBM enriquecido + MLP PyTorch + Pandera schemas
-- **Dia 3** — Agente ReAct + 5 tools + RAG regulatorio (CMN, LGPD)
-- **Dia 4** — FastAPI + Prometheus + Grafana + Langfuse
-- **Dia 5** — Fairlearn audit + Presidio + golden set eval + LGPD gate
-- **Dia 6** — Polimento, testes, submission, apresentação
-
-Detalhes em [`PLANO_DATATHON.md`](PLANO_DATATHON.md).
-
----
-
-## MLOps Maturity
-
-Target: **nivel 2** da escala Microsoft, com:
-- CI/CD via GitHub Actions
-- Modelo versionado em MLflow Registry
-- Schemas com Pandera, testes unitarios cobrindo features
-- Observabilidade com metricas de negocio (nao so infra)
-- Auditoria de fairness em cada treino
-- Trace completo da decisao do agente (Langfuse)
-
----
-
-## Governança e conformidade
-
-O projeto explicita como atende:
-- **CMN 4.557** (estrutura de gestão de risco de crédito)
-- **CMN 4.966** (metodologias internas de rating)
-- **LGPD Art. 20** (direito à revisão humana em decisões automatizadas)
-- **CDC Art. 43** (SCR e direito de acesso)
-- **Lei 14.181/21** (superendividamento — gate de affordability)
 
 Implementacao em `src/security/` e auditoria em `evaluation/`.
 
----
-
-## Autor
-
-Rafael Zampieri — [@rafaelkrambek](https://github.com/rafaelkrambek)
-
-FIAP Pos-Tech Datathon Fase 05, abril 2026.
-
----
 
 
 
