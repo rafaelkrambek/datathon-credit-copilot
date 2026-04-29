@@ -344,3 +344,37 @@ docker compose down            # mantem volumes (historico)
 docker compose down -v         # apaga tudo
 ```
 
+
+---
+
+## Decisões e aprendizados
+
+### Por que Home Credit e nao Credit Card Fraud
+Inicialmente pensei em usar Credit Card Fraud Detection do Kaggle. Mudei pro
+Home Credit porque tem 7 tabelas relacionais (bom pra demonstrar agente
+orquestrando tools), features named (vs PCA anonymized do CC Fraud), e
+escala maior (307k vs 284k linhas).
+
+### Por que LightGBM e nao XGBoost
+LightGBM lida nativamente com features categoricas (sem precisar one-hot),
+treina mais rapido em CPU (importante porque rodei em laptop), e tem
+integracao nativa com SHAP. Resultado final foi competitivo: Gini 0.565.
+
+### Por que ReAct e nao Plan-and-Execute
+ReAct e mais simples e dispensa planning step explicito. Pra o caso de uso
+(analise de credito com 5 tools bem definidas), o agente nao precisa
+planejar com antecedencia — basta orquestrar tool por tool conforme a
+pergunta. Plan-and-Execute seria overkill.
+
+### Por que Groq Llama e nao OpenAI
+Free tier real (OpenAI nao tem). Groq quantiza pra INT8 e tem latencia ~10x
+melhor. Llama 3.3 70B em producao, 8B em avaliacao (preserva TPD do 70B).
+
+### Trade-offs vividos
+- Tentei rodar Docker local mas BIOS bloqueava virtualizacao. Mesmo apos
+  desinstalar VirtualBox e ativar todas features, nao subiu. Migrei pra
+  binarios nativos Windows (Prometheus + Grafana) — mesmo resultado visual.
+- TPD do free tier do Groq estourou no meio do golden set. Re-rodei no dia
+  seguinte com mais dados. Documento isso porque e realidade do free tier.
+- Embedding RAG com sentence-transformers teve conflito de versao com
+  pyarrow. Resolvi pinando pyarrow<18.
