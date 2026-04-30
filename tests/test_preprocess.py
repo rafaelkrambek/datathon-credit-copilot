@@ -1,20 +1,23 @@
 """Testa que preprocess engineered features estao corretas."""
+
 import pandas as pd
 
 from src.features.preprocess import add_engineered_features
 
 
 def _base_row():
-    return pd.DataFrame({
-        "AMT_CREDIT": [100000.0],
-        "AMT_INCOME_TOTAL": [50000.0],
-        "AMT_ANNUITY": [5000.0],
-        "DAYS_EMPLOYED": [-365],
-        "DAYS_BIRTH": [-12000],
-        "EXT_SOURCE_1": [0.5],
-        "EXT_SOURCE_2": [0.6],
-        "EXT_SOURCE_3": [0.7],
-    })
+    return pd.DataFrame(
+        {
+            "AMT_CREDIT": [100000.0],
+            "AMT_INCOME_TOTAL": [50000.0],
+            "AMT_ANNUITY": [5000.0],
+            "DAYS_EMPLOYED": [-365],
+            "DAYS_BIRTH": [-12000],
+            "EXT_SOURCE_1": [0.5],
+            "EXT_SOURCE_2": [0.6],
+            "EXT_SOURCE_3": [0.7],
+        }
+    )
 
 
 def test_credit_income_ratio():
