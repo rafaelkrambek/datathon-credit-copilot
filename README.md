@@ -12,6 +12,8 @@ Métrica de negócio: Gini ≥ 0.55 e KS ≥ 0.30 (limite do regulador BR), com 
 
 Resultado atual: Gini 0.565, KS 0.427, LLM-as-judge overall 4.67/5 em 13 perguntas validadas do golden set.
 
+O objetivo final é que a LLM sirva como um grande suporte para análise de crédito (um gargalo comum em instituições financeiras0>
+
 ## Arquitetura de Alto Nível
 
 ```
