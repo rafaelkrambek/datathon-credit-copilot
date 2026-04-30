@@ -26,10 +26,10 @@ jobs:
           uv pip install --system -e ".[dev]"
 
       - name: Lint with ruff
-        run: ruff check src/ scripts/
+        run: ruff check src/ tests/
 
       - name: Format check
-        run: ruff format --check src/ scripts/
+        run: ruff format --check src/ tests/
 
       - name: Run unit tests (pytest)
         run: pytest tests/ -v
