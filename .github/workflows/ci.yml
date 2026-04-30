@@ -31,11 +31,13 @@ jobs:
       - name: Format check
         run: ruff format --check src/ scripts/
 
-      - name: Smoke imports (sem LLM/data)
+      - name: Run unit tests (pytest)
+        run: pytest tests/ -v
+
+      - name: Smoke imports (sem deps pesadas)
         run: |
-          python -c "from src.security.guardrails import check_input, check_output; print('guardrails OK')"
-          python -c "from src.security.pii import mask_pii; print('pii module OK')"
           python -c "from src.features.preprocess import load_enriched; print('preprocess OK')"
+          python -c "from src.security.guardrails import PROMPT_INJECTION_PATTERNS; print('guardrails patterns OK')"
 
   docker-build:
     runs-on: ubuntu-latest

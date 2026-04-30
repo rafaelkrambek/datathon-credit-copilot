@@ -1,325 +1,297 @@
-# Credit Underwriting Copilot
+# Datathon Fase 05 — Credit Underwriting Copilot com Agente LLM + RAG
 
-> Assistente de análise de crédito baseado em LLM agentico, com modelo de default risk, RAG sobre regulatórios brasileiros e observabilidade end-to-end.
+**FIAP Pós-Tech MLET | Solo (Rafael Zampieri) | Abril 2026**
 
-Projeto do **FIAP Pós-Tech Datathon — Fase 05: LLMs e Agentes**. Objetivo: demonstrar um pipeline MLOps maturity level 2 combinando machine learning tradicional, agentes com tool use e governança regulatória aplicada ao domínio de concessão de crédito.
+[![CI](https://github.com/rafaelkrambek/datathon-credit-copilot/actions/workflows/ci.yml/badge.svg)](https://github.com/rafaelkrambek/datathon-credit-copilot/actions/workflows/ci.yml)
 
-**Dataset**: [Home Credit Default Risk](https://www.kaggle.com/competitions/home-credit-default-risk) — 307k aplicações, 7 tabelas relacionais, taxa de default de ~8%.
+## Problema de Negócio
 
----
+Apoio à decisão de concessão de crédito ao consumidor, combinando modelo de default risk (LightGBM) com agente LLM (Llama 3.3 70B via Groq) que orquestra 5 tools — perfil do cliente, histórico externo (bureau), histórico interno, score com SHAP e RAG sobre regulatórios brasileiros (CMN 4.557, CMN 4.966, LGPD Art. 20, CDC Art. 43, Lei 14.181/21).
 
-## O que o copiloto faz
+Métrica de negócio: Gini ≥ 0.55 e KS ≥ 0.30 (limite do regulador BR), com decisão final sempre auditável e nunca finalizada de forma automatizada nas negações (LGPD Art. 20).
 
-Em produção, um analista de crédito perguntaria:
+Resultado atual: Gini 0.565, KS 0.427, LLM-as-judge overall 4.67/5 em 13 perguntas validadas do golden set.
 
-> "Cliente SK_ID_CURR 123456 — esse perfil merece aprovação? Qual o risco? Há histórico bureau preocupante? Sobre qual política regulatória devo me basear?"
+## Arquitetura de Alto Nível
 
-O agente ReAct roteia a pergunta por **5 tools**:
+```
+                Analista (HTTP / curl / Swagger UI)
+                            |
+  +-----------------------------------------------------+
+  |  CAMADA 1: API FastAPI                              |
+  |  - Pydantic schemas (validação de tipo)             |
+  |  - lifespan warmup (sem cold start)                 |
+  +-----------------------------------------------------+
+                            |
+  +-----------------------------------------------------+
+  |  CAMADA 2: Segurança de input                       |
+  |  - Guardrails (regex prompt injection, off-topic)   |
+  |  - Presidio PII mask (CPF, CNPJ, email, RG, nome)   |
+  +-----------------------------------------------------+
+                            |
+  +-----------------------------------------------------+
+  |  CAMADA 3: Agente ReAct (LangChain)                 |
+  |  - LLM: Llama 3.3 70B via Groq (INT8 quantized)     |
+  |  - System prompt com workflow obrigatório           |
+  |  - LGPD gate (negar -> revisão humana)              |
+  +-----------------------------------------------------+
+                            |
+  +---+ +---+ +---+ +---+ +---+
+  |T1 | |T2 | |T3 | |T4 | |T5 |   CAMADA 4: 5 Tools
+  +---+ +---+ +---+ +---+ +---+
+                            |
+  +-----------------------------------------------------+
+  |  CAMADA 5: Dados + modelo                           |
+  |  - data/raw/*.csv (DVC tracked)                     |
+  |  - data/processed/application_enriched.parquet      |
+  |  - mlruns/ -> LightGBM gini 0.565                   |
+  |  - data/chroma_db/ -> RAG (5 docs regulatórios)     |
+  +-----------------------------------------------------+
+                            |
+  +-----------------------------------------------------+
+  |  CAMADA 6: Output + observabilidade                 |
+  |  - Guardrails de output (estrutura, sem PII)        |
+  |  - Prometheus metrics (counter, histogram)          |
+  |  - Langfuse trace (cada tool call no LLM)           |
+  |  - Grafana dashboards (9 painéis)                   |
+  +-----------------------------------------------------+
+                            |
+                            v
+                   JSON pra o analista
+```
 
-1. `get_applicant_profile` — dados da aplicação atual
-2. `get_bureau_history` — histórico externo de crédito
-3. `get_internal_history` — histórico dentro do Home Credit
-4. `score_and_explain` — PD (probabilidade de default) + SHAP por cliente
-5. `search_credit_policy` — RAG sobre CMN 4.557/4.966, LGPD Art. 20, CDC Art. 43
-
-E retorna uma **recomendação com justificativa** (aprovar / revisão manual / negar), sempre com human-in-the-loop nas negações conforme LGPD.
-
----
-
-## Stack
-
-| Camada | Tecnologias |
-|---|---|
-| **Dados** | Pandas, PyArrow, DVC (versionamento) |
-| **ML** | scikit-learn, LightGBM, PyTorch (MLP), category_encoders (WoE), SHAP |
-| **Tracking** | MLflow (experiments + model registry) |
-| **Agente** | LangChain (ReAct), Groq (Llama 3.1 8B), ChromaDB, tiktoken |
-| **Observabilidade** | Langfuse (LLM traces), Prometheus + Grafana (métricas), Evidently (drift) |
-| **Servir** | FastAPI, Uvicorn, slowapi (rate limit) |
-| **Governança** | Fairlearn (DI, Equal Opportunity), Presidio (PII pt_BR), OWASP LLM Top 10 |
-| **Qualidade** | Ruff, mypy, pytest, Pandera (schemas) |
-
----
-
-## Arquitetura (alvo Dia 6)
-                          ┌──────────────────────┐
-                          │   Analista (UI/API)  │
-                          └──────────┬───────────┘
-                                     │ prompt
-                       ┌─────────────▼──────────────┐
-                       │   FastAPI + Rate Limiter   │
-                       │   Presidio (PII mask)      │
-                       └─────────────┬──────────────┘
-                                     │
-                       ┌─────────────▼──────────────┐
-                       │   Agente ReAct (Groq)      │
-                       │   Prompt + Guardrails      │
-                       └─────────────┬──────────────┘
-                                     │
-         ┌───────────┬───────────────┼────────────────┬──────────┐
-         ▼           ▼               ▼                ▼          ▼
-    profile     bureau          score_and_         internal    RAG
-                history          explain           history  (regulatorios)
-                                     │                         │
-                                     ▼                         ▼
-                                LightGBM                   ChromaDB
-                                (MLflow)                   (CMN, LGPD)
-                                     │
-                                     ▼
-                           Fairlearn audit + LGPD gate
-                                     │
-                                     ▼
-                       Langfuse trace + Prometheus metrics
-
----
-
-## Estrutura
-datathon-credit-copilot/
-├── data/
-│   ├── raw/                # CSVs do Kaggle (gitignored, DVC-tracked)
-│   ├── processed/          # Parquets consolidados
-│   ├── knowledge_base/     # PDFs regulatorios (CMN, LGPD, CDC...)
-│   └── golden_set/         # 20 pares pergunta/resposta para eval RAG
-├── notebooks/
-│   └── 01_eda.ipynb        # EDA inicial (TARGET, missings, fairness)
-├── scripts/
-│   └── make_eda_notebook.py
-├── src/
-│   ├── features/
-│   │   ├── preprocess.py       # limpeza + feature engineering
-│   │   └── aggregations.py     # agrega 6 tabelas auxiliares
-│   ├── models/
-│   │   └── train_baseline.py   # LogReg+WoE e LightGBM com MLflow
-│   ├── agent/                  # (Dia 3) ReAct + 5 tools
-│   ├── serving/                # (Dia 4) FastAPI + endpoints
-│   ├── monitoring/             # (Dia 4) Prometheus + Evidently
-│   └── security/               # (Dia 5) Presidio + LGPD gate
-├── tests/
-├── evaluation/                 # (Dia 5) golden set + Ragas + Fairlearn
-├── docs/
-├── configs/
-├── PLANO_DATATHON.md           # plano estrategico completo
-├── pyproject.toml              # deps agrupadas (dev/ml/llm/serving/security)
-└── README.md
-
----
-
-## Setup (replicação local, ~15 min)
+## Início Rápido
 
 ### Pré-requisitos
-- Python 3.11 (`python --version`)
-- [uv](https://docs.astral.sh/uv/) (`irm https://astral.sh/uv/install.ps1 | iex` no Windows; `curl -LsSf https://astral.sh/uv/install.sh | sh` no macOS/Linux)
-- Git
-- 4 GB livres em disco
 
-### 1. Clone e ambiente
+- Python ≥ 3.11
+- Git + Git LFS (opcional)
+- Conta Kaggle com API key (para baixar o dataset Home Credit)
+- Conta Groq com API key — free tier ([console.groq.com](https://console.groq.com))
+- Conta Langfuse Cloud — free tier ([cloud.langfuse.com](https://cloud.langfuse.com))
+- (Opcional) Docker + Docker Compose para a stack completa de observabilidade
+
+### 1. Configurar ambiente
 
 ```bash
 git clone https://github.com/rafaelkrambek/datathon-credit-copilot.git
 cd datathon-credit-copilot
 
+# uv (Astral) — package manager Python 10x mais rápido que pip
+curl -LsSf https://astral.sh/uv/install.sh | sh   # macOS/Linux
+# irm https://astral.sh/uv/install.ps1 | iex      # Windows PowerShell
+
 uv venv .venv
-source .venv/Scripts/activate          # Windows Git Bash
-# .venv\Scripts\activate                # Windows PowerShell
-# source .venv/bin/activate              # macOS/Linux
+source .venv/bin/activate          # Linux/Mac
+# .venv\Scripts\activate           # Windows
 
 uv pip install -e ".[dev,ml,llm,serving,security]"
-python -m ipykernel install --user --name credit-copilot --display-name "Python (credit-copilot)"
+python -m spacy download pt_core_news_sm
+python -m ipykernel install --user --name credit-copilot
+
+cp .env.example .env   # edita com GROQ_API_KEY, LANGFUSE_*
 ```
 
-### 2. Baixar o dataset
-
-Como o Home Credit Default Risk tem ~700 MB, o repositório não contém os CSVs. Duas formas:
-
-**Via Kaggle API** (requer [key configurada](https://www.kaggle.com/docs/api)):
+### 2. Baixar dataset
 
 ```bash
 mkdir -p data/raw
 cd data/raw
 kaggle competitions download -c home-credit-default-risk
-unzip home-credit-default-risk.zip
-rm home-credit-default-risk.zip
+unzip home-credit-default-risk.zip && rm home-credit-default-risk.zip
 cd ../..
 ```
 
-**Manual**: baixe de https://www.kaggle.com/competitions/home-credit-default-risk/data e extraia os 10 CSVs em `data/raw/`.
-
-### 3. Validar integridade (opcional, via DVC)
+### 3. Pre-builds (features + modelo + RAG index)
 
 ```bash
-dvc status       # confirma que hashes dos CSVs batem com data/raw.dvc
+python -m src.features.aggregations         # gera application_enriched.parquet
+python -m src.models.train_baseline --model lgbm --enriched   # treina + MLflow
+python -m src.agent.rag                     # indexa knowledge_base no Chroma
 ```
 
----
-
-## Como rodar
-
-### EDA
+### 4. Iniciar API
 
 ```bash
-# No VS Code
-code notebooks/01_eda.ipynb
-# Select kernel: "Python (credit-copilot)" → Run All
+uvicorn src.serving.api:app --host 127.0.0.1 --port 8000
 ```
 
-### Pipeline de features
+### 5. Usar endpoints
 
 ```bash
-python -m src.features.aggregations
-# Gera data/processed/application_enriched.parquet (~150 colunas, 307k linhas)
-```
-
-### Treinar baselines
-
-```bash
-# LogReg + WoE (interpretavel, ~3 min)
-python -m src.models.train_baseline --model logreg
-
-# LightGBM v1 (so application_train)
-python -m src.models.train_baseline --model lgbm
-
-# LightGBM v2 (com todas as tabelas agregadas)
-python -m src.models.train_baseline --model lgbm --enriched
-```
-
-### Explorar experimentos
-
-```bash
-mlflow ui --workers 1 --host 127.0.0.1 --port 5000
-# Abre http://127.0.0.1:5000
-```
-
-
-
-Implementacao em `src/security/` e auditoria em `evaluation/`.
-
-
-
-
-## Resultados da avaliação (golden set 20 perguntas)
-
-| Métrica | Valor | Notas |
-|---|---|---|
-| Recommendation accuracy | 100% | 5/5 perguntas com expected_recommendation acertaram |
-| Keyword recall | 68.6% | mean across 13 valid runs |
-| Tool usage accuracy | 100% | agente sempre chamou as tools corretas |
-| LLM-as-judge — Técnico | 4.62/5 | 13/13 julgadas |
-| LLM-as-judge — Regulatório | 4.92/5 | quase perfeito (RAG citando lei correta) |
-| LLM-as-judge — Negócio | 4.46/5 | recomendação alinhada com tier de risco |
-| **LLM-as-judge — Overall** | **4.67/5** | n=13 |
-| RAGAS faithfulness | 0.75 | 75% das claims fundamentadas no contexto |
-| RAGAS context_precision | 0.75 | chunks relevantes |
-| RAGAS context_recall | 0.69 | 69% do esperado nos contextos |
-
-7 perguntas das 20 ficaram pendentes (rate limit TPD do free tier do Groq). Todas as 5 perguntas com recomendação esperada (APROVAR/NEGAR) foram acertadas.
-
-## Docker
-
-Imagem multi-stage (builder + runtime) com usuario nao-root e healthcheck.
-
-### Build
-
-```bash
-docker build -t credit-copilot:latest .
-```
-
-Tempo estimado: 5-8 min (build do venv com LightGBM, torch, etc.).
-
-### Run
-
-```bash
-docker run -d \
-  --name copilot \
-  -p 8000:8000 \
-  -v $(pwd)/data/raw:/app/data/raw:ro \
-  --env-file .env \
-  credit-copilot:latest
-```
-
-> **Importante**: o `data/raw/` (CSVs do Kaggle) precisa ser montado como volume — nao vai dentro da imagem (2.6 GB).
-
-### Verificar saude
-
-```bash
+# Health check
 curl http://localhost:8000/healthz
-docker logs copilot --tail 50
+
+# Análise de cliente (agente roda 5 tools, ~25s no 70B)
+curl -X POST http://localhost:8000/analyze \
+  -H "Content-Type: application/json" \
+  -d '{"sk_id_curr": 100002}'
+
+# Análise com pergunta customizada (PII é mascarada antes do LLM)
+curl -X POST http://localhost:8000/analyze \
+  -H "Content-Type: application/json" \
+  -d '{"sk_id_curr": 100003, "question": "Cliente apto para R$ 200 mil?"}'
+
+# Métricas Prometheus
+curl http://localhost:8000/metrics | grep copilot
 ```
 
-### Parar e limpar
+### 6. Rodar testes
 
 ```bash
-docker stop copilot && docker rm copilot
+pytest tests/ -v
 ```
 
+### 7. Stack completa (observabilidade)
 
----
+```bash
+docker compose up -d --build         # api + prometheus + grafana
+# Grafana: http://localhost:3000 (admin/admin)
+# Prometheus: http://localhost:9090
+```
 
-## Stack de Observabilidade
+## Estrutura do Repositório
 
-Stack completa via `docker-compose`:
+```
+datathon-credit-copilot/
+├── .github/workflows/ci.yml          # GitHub Actions: lint -> test -> Docker build
+├── .devcontainer/                    # config Codespaces (fallback)
+├── infra/
+│   ├── prometheus/prometheus.yml      # scrape config
+│   └── grafana/
+│       ├── provisioning/              # datasource + dashboards auto
+│       └── dashboards/copilot.json    # 9 painéis prontos
+├── data/
+│   ├── raw/                           # 10 CSVs Kaggle (DVC tracked, gitignored)
+│   ├── processed/*.parquet            # tabela enriquecida (gitignored)
+│   ├── knowledge_base/*.md            # 5 docs regulatórios pro RAG
+│   ├── golden_set/golden_set.json     # 20 perguntas pra avaliação
+│   └── chroma_db/                     # vector store (gitignored)
+├── docs/
+│   ├── SYSTEM_CARD.md                 # visão completa do sistema
+│   ├── owasp.md                       # OWASP LLM Top 10 mapping
+│   ├── business_metrics.md            # negócio -> técnico
+│   ├── quantization.md                # decisão sobre INT8 do Groq
+│   └── benchmark.md                   # comparativo das 3 configs ML
+├── evaluation/
+│   ├── fairness/                      # Fairlearn audit + ThresholdOptimizer
+│   ├── golden_set/results.json        # eval do agente
+│   ├── llm_judge/results.json         # 3 critérios técnico/regulatório/negócio
+│   ├── ragas/                         # 4 métricas
+│   └── drift/drift.json               # KS test
+├── notebooks/
+│   └── 01_eda.ipynb                   # EDA com fairness preview
+├── scripts/
+│   └── make_eda_notebook.py           # gerador do notebook
+├── src/
+│   ├── agent/
+│   │   ├── data_layer.py              # queries por SK_ID_CURR (lru_cache)
+│   │   ├── model_layer.py             # carrega LightGBM do MLflow + SHAP
+│   │   ├── tools.py                   # 5 tools com @tool decorator
+│   │   ├── rag.py                     # ChromaDB + sentence-transformers
+│   │   └── react_agent.py             # ChatGroq + create_tool_calling_agent
+│   ├── evaluation/
+│   │   ├── golden_set_eval.py         # rec accuracy, kw recall, tool usage
+│   │   ├── llm_judge.py               # 3 critérios via Llama 8B
+│   │   └── ragas_eval.py              # 4 métricas RAGAS
+│   ├── features/
+│   │   ├── preprocess.py              # drop building cols, engineered ratios
+│   │   └── aggregations.py            # 7 tabelas -> 150 features
+│   ├── models/
+│   │   └── train_baseline.py          # LogReg+WoE e LightGBM com MLflow
+│   ├── monitoring/
+│   │   ├── fairness.py                # Fairlearn DI/EOD
+│   │   ├── mitigation.py              # ThresholdOptimizer (Equal Opportunity)
+│   │   └── drift.py                   # KS test 2-sample
+│   ├── security/
+│   │   ├── pii.py                     # Presidio com recognizers pt_BR
+│   │   └── guardrails.py              # input + output validators
+│   └── serving/
+│       └── api.py                     # FastAPI com lifespan warmup
+├── tests/
+│   ├── test_guardrails.py             # 5 testes (injection, output, PII)
+│   └── test_preprocess.py             # 3 testes (engineered features)
+├── docker-compose.yml                 # api + prometheus + grafana
+├── Dockerfile                         # multi-stage, non-root user
+├── pyproject.toml                     # 5 grupos opcionais de deps
+├── CHANGELOG.md                       # evolução por dia
+└── README.md                          # você está aqui
+```
 
-| Serviço | Porta | URL |
+## Stack Tecnológica
+
+| Componente | Tecnologia | Justificativa |
 |---|---|---|
-| API (FastAPI) | 8000 | http://localhost:8000/docs |
-| Prometheus | 9090 | http://localhost:9090 |
-| Grafana | 3000 | http://localhost:3000 (admin/admin) |
-| Langfuse | — | https://us.cloud.langfuse.com (cloud) |
+| Modelo de risco | LightGBM 4.5 + LogReg+WoE | LGBM trata categóricas nativas e treina rápido em CPU; LogReg interpretável vai pra auditoria |
+| LLM | Llama 3.3 70B Versatile (Groq) | Free tier real, INT8 quantized, latência ~10x menor que GPU |
+| Quantização | INT8 do Groq (LPU custom) | Sem custo de hardware próprio; qualidade ~95% do FP16 |
+| Agente | LangChain ReAct (`create_tool_calling_agent`) | Framework maduro, tool calling nativo. Pinado <1.0 (v1 quebrou API) |
+| Tools | 5 tools read-only (@tool decorator) | Workflow linear, sem necessidade de Plan-and-Execute |
+| RAG | ChromaDB + sentence-transformers (MiniLM-L12-v2) | Local-first, embeddings multilingue PT/EN |
+| Encoding crédito | category_encoders (WOE) | Padrão clássico de credit scoring, bins auditáveis |
+| Explicabilidade | SHAP TreeExplainer | Top-N feature contribution por predição |
+| Tracking | MLflow 2.16 (file backend) | Tags padronizadas, lineage, model registry |
+| API | FastAPI + Pydantic + Uvicorn | Async-first, OpenAPI auto, validação de tipo |
+| Avaliação | RAGAS + LLM-as-judge custom | 4 métricas RAG + 3 critérios (técnico/regulatório/negócio) |
+| Drift | KS test 2-sample (scipy) | Sem dependência pesada, suficiente pra demo |
+| Fairness | Fairlearn (DI, EOD, ThresholdOptimizer) | Audit + mitigação Equal Opportunity |
+| Segurança | Presidio (recognizers pt_BR) + guardrails regex | LGPD + OWASP LLM01/02/06/08/09 |
+| Observabilidade app | Prometheus + Grafana (9 painéis) | Métricas custom: requests, latência, tool calls, PII, guardrails |
+| Observabilidade LLM | Langfuse Cloud (free tier) | Trace por chamada com tokens, latência, custo |
+| CI/CD | GitHub Actions | ruff lint + format + pytest + Docker build |
+| Dados | DVC 3.55 | Versiona data/raw com hash, sem inflar Git |
+| Container | Docker multi-stage + Compose | Imagem ~600MB-1GB (sem torch/CUDA via grupo `runtime`) |
 
-### Subir tudo
+## Design Patterns
 
-```bash
-docker compose up -d
-```
+| Padrão | Aplicação | Referência |
+|---|---|---|
+| Repository | `data_layer.py` centraliza acesso a `application_train.csv`, `bureau.csv`, `previous_application.csv` com `@lru_cache` | [martinfowler.com](https://martinfowler.com/eaaCatalog/repository.html) |
+| Strategy | `MODEL_REGISTRY` em `train_baseline.py` permite trocar treinador (LogReg vs LightGBM) sem alterar callers | [refactoring.guru](https://refactoring.guru/design-patterns/strategy) |
+| Singleton (lazy) | `_load_latest_lgbm()` e `_embeddings()` carregam modelo/embeddings uma única vez via `@lru_cache(maxsize=1)` | [refactoring.guru](https://refactoring.guru/design-patterns/singleton) |
+| Decorator | `@tool` do LangChain registra funções como ferramentas do agente sem alterar a função em si | [refactoring.guru](https://refactoring.guru/design-patterns/decorator) |
+| Chain of Responsibility | Pipeline de `/analyze`: input guardrail → Presidio mask → agente → output guardrail → Prometheus | [refactoring.guru](https://refactoring.guru/design-patterns/chain-of-responsibility) |
+| Adapter | Cada tool wrappa um repository call em formato JSON consumível pelo LLM | [refactoring.guru](https://refactoring.guru/design-patterns/adapter) |
 
-Aguarde ~1 min pro warmup. Depois:
+## Endpoints da API
 
-```bash
-docker compose ps        # confere health
-docker compose logs api  # tail dos logs
-```
+| Método | Path | Tag | Descrição |
+|---|---|---|---|
+| GET | `/` | meta | Metadata (versão, lista de endpoints) |
+| GET | `/healthz` | meta | Probe de saúde (Kubernetes-ready) |
+| GET | `/metrics` | meta | Métricas em formato Prometheus |
+| POST | `/analyze` | analysis | Endpoint principal: dispara agente com 5 tools |
+| GET | `/docs` | meta | Swagger UI auto-gerada |
 
-### Dashboard Grafana
+## Avaliação
 
-Acessa `http://localhost:3000` (anonimo OK). Vai em **Dashboards → Credit Underwriting Copilot — Observability**. 9 paineis: requests/min, latencia p50/p95/p99, tool calls, PII detectada, guardrails bloqueados.
+| Frente | Métrica | Resultado |
+|---|---|---|
+| ML — discriminação | Gini (LightGBM v2) | 0.5650 |
+| ML — discriminação | KS | 0.4271 |
+| ML — interpretável | Gini (LogReg+WoE) | 0.4990 |
+| Fairness — gênero | DI baseline → mitigado | 0.818 → 0.865 |
+| Fairness — gênero | EOD baseline → mitigado | +0.139 → +0.029 (−80%) |
+| Agente — recommendation accuracy | n=13 (7 com TPD esgotado) | 100% |
+| Agente — keyword recall | n=13 | 68.6% |
+| Agente — tool usage accuracy | n=13 | 100% |
+| LLM-as-judge — técnico | 1-5 | 4.62 |
+| LLM-as-judge — regulatório | 1-5 | 4.92 |
+| LLM-as-judge — negócio | 1-5 | 4.46 |
+| LLM-as-judge — overall | 1-5 | **4.67** |
+| RAGAS — faithfulness | 0-1 | 0.75 |
+| RAGAS — context_precision | 0-1 | 0.75 |
+| RAGAS — context_recall | 0-1 | 0.69 |
+| RAGAS — answer_relevancy | 0-1 | 0.26 (avaliado em 8B; ~0.5+ esperado em 70B) |
 
-### Parar
+## Documentação
 
-```bash
-docker compose down            # mantem volumes (historico)
-docker compose down -v         # apaga tudo
-```
+- [System Card](docs/SYSTEM_CARD.md) — visão completa, casos de uso, limitações, fairness, LGPD, segurança
+- [OWASP Mapping](docs/owasp.md) — 5 ameaças LLM Top 10 com mitigação e cenários adversariais
+- [Business Metrics](docs/business_metrics.md) — mapeamento métricas de negócio → técnicas
+- [Quantization](docs/quantization.md) — decisão sobre INT8 do Groq, 70B em produção vs 8B em avaliação
+- [Benchmark](docs/benchmark.md) — comparativo formal LogReg vs LightGBM v1 vs LightGBM v2 (3 configs)
 
+## Licença e contato
 
----
-
-## Decisões e aprendizados
-
-### Por que Home Credit e nao Credit Card Fraud
-Inicialmente pensei em usar Credit Card Fraud Detection do Kaggle. Mudei pro
-Home Credit porque tem 7 tabelas relacionais (bom pra demonstrar agente
-orquestrando tools), features named (vs PCA anonymized do CC Fraud), e
-escala maior (307k vs 284k linhas).
-
-### Por que LightGBM e nao XGBoost
-LightGBM lida nativamente com features categoricas (sem precisar one-hot),
-treina mais rapido em CPU (importante porque rodei em laptop), e tem
-integracao nativa com SHAP. Resultado final foi competitivo: Gini 0.565.
-
-### Por que ReAct e nao Plan-and-Execute
-ReAct e mais simples e dispensa planning step explicito. Pra o caso de uso
-(analise de credito com 5 tools bem definidas), o agente nao precisa
-planejar com antecedencia — basta orquestrar tool por tool conforme a
-pergunta. Plan-and-Execute seria overkill.
-
-### Por que Groq Llama e nao OpenAI
-Free tier real (OpenAI nao tem). Groq quantiza pra INT8 e tem latencia ~10x
-melhor. Llama 3.3 70B em producao, 8B em avaliacao (preserva TPD do 70B).
-
-### Trade-offs vividos
-- Tentei rodar Docker local mas BIOS bloqueava virtualizacao. Mesmo apos
-  desinstalar VirtualBox e ativar todas features, nao subiu. Migrei pra
-  binarios nativos Windows (Prometheus + Grafana) — mesmo resultado visual.
-- TPD do free tier do Groq estourou no meio do golden set. Re-rodei no dia
-  seguinte com mais dados. Documento isso porque e realidade do free tier.
-- Embedding RAG com sentence-transformers teve conflito de versao com
-  pyarrow. Resolvi pinando pyarrow<18.
+Projeto acadêmico para FIAP Pós-Tech MLET (Datathon Fase 05). Sem licença comercial. Contato: rafaelzampieri5@gmail.com.
